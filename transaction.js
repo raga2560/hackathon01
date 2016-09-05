@@ -1,48 +1,36 @@
-/* The userrecordDAO must be constructed with a connected database object */
-function UserrecordDAO(db) {
+/* The TransactionDAO must be constructed with a connected database object */
+function TransactionDAO(db) {
     "use strict";
 
     /* If this constructor is called without the "new" operator, "this" points
      * to the global object. Log a warning and call it correctly. */
-    if (false === (this instanceof UserrecordDAO)) {
-        console.log('Warning: userrecordDAO constructor called without "new" operator');
-        return new UserrecordDAO(db);
+    if (false === (this instanceof TransactionDAO)) {
+        console.log('Warning: TransactionDAO constructor called without "new" operator');
+        return new TransactionDAO(db);
     }
 
-    var userrecord = db.collection("userrecord");
+    var Transaction = db.collection("Transaction");
 	/*
 	Format
-	{username:'', userrecordid:'','userrecord': {,}}
+	{username:'', Transactionid:'','Transaction': {,}}
 	
 	*/
 	
-	this.insertuser = function (username, data, callback) {
+	this.inserttransaction = function ( data, callback) {
         "use strict";
         
 		
 
         "use strict";
 		 
-			var objecttoinsert = {
-			username : username,
-			
-			
-			assets:[],
-			record:{}
-			
-			};
-		
-			
-			
-			objecttoinsert.record = data;
 			
 						
 			
-			userrecord.insert(objecttoinsert,{w:1}, function (err, result) {
+			Transaction.insert(data,{w:1}, function (err, result) {
             "use strict";
 
             if (!err) {
-                console.log("Inserted new userrecord");
+                console.log("Inserted new Transaction");
                 return callback(null, result);
             }
 
@@ -52,13 +40,13 @@ function UserrecordDAO(db) {
 		
     }
 	
-	this.updateuserrecord = function (username, data, callback) {
+	this.updateTransaction = function (username, data, callback) {
         "use strict";
         
 		
 
         "use strict";
-		  userrecord.findOne({'username': username}, function(err, record) {
+		  Transaction.findOne({'username': username}, function(err, record) {
             "use strict";
 
             if (err) return callback(err, null);
@@ -68,10 +56,10 @@ function UserrecordDAO(db) {
 			query['_id'] = record['_id'];
 				
 			
-			record.userrecord = data;
+			record.Transaction = data;
 			
 			
-			userrecord.update(query, {$set: record}, function (err){
+			Transaction.update(query, {$set: record}, function (err){
 
 			if (err) return callback (err, null);
 			callback(null, 1);
@@ -91,11 +79,11 @@ function UserrecordDAO(db) {
 			
 			objecttoinsert.record = data;
 			
-			userrecord.insert(objecttoinsert,{w:1}, function (err, result) {
+			Transaction.insert(objecttoinsert,{w:1}, function (err, result) {
             "use strict";
 
             if (!err) {
-                console.log("Inserted new userrecord");
+                console.log("Inserted new Transaction");
                 return callback(null, result);
             }
 
@@ -115,7 +103,7 @@ function UserrecordDAO(db) {
 		
     }
 	
-	this.listuserrecords = function(username,type, callback) {
+	this.listTransactions = function(username,type, callback) {
         "use strict";
 		
 		console.log("type="+ type);
@@ -127,7 +115,7 @@ function UserrecordDAO(db) {
 			return callback(err, null);
 		}
 		
-        userrecord.find({'username': username, 'record.role': type}).toArray(function(err, data) {
+        Transaction.find({'username': username, 'record.role': type}).toArray(function(err, data) {
             "use strict";
 
 			console.log(data);
@@ -137,10 +125,10 @@ function UserrecordDAO(db) {
         });
     }
 	
-	this.getoneuserrecord = function(username, userrecordid, callback) {
+	this.getoneTransaction = function(username, Transactionid, callback) {
         "use strict";
 		
-        userrecord.findOne( {'username': username},function(err, data) {
+        Transaction.findOne( {'username': username},function(err, data) {
             "use strict";
 
 			console.log(data);
@@ -160,7 +148,7 @@ function UserrecordDAO(db) {
 	var query = {};
 			query['_id'] = o_id;
 			
-        userrecord.findOne( query,function(err, data) {
+        Transaction.findOne( query,function(err, data) {
             "use strict";
 
 			console.log(data);
@@ -173,10 +161,7 @@ function UserrecordDAO(db) {
 	this.getrecordbyaddress = function(address, callback) {
         "use strict";
 		
-		//getrecordbyaddress
-		
-		
-        userrecord.findOne( {'record.testnet.address': address},function(err, obj) {
+        Transaction.findOne( {'record.testnet.address': address},function(err, obj) {
             "use strict";
 
 			console.log(obj);
@@ -185,10 +170,10 @@ function UserrecordDAO(db) {
             callback(null, obj);
         });
     }
-	this.getuserrecord = function(username, callback) {
+	this.getTransaction = function(username, callback) {
         "use strict";
 		
-        userrecord.findOne( {'creator': username}, {'home':1, '_id': 1},function(err, social1) {
+        Transaction.findOne( {'creator': username}, {'home':1, '_id': 1},function(err, social1) {
             "use strict";
 
 			console.log(social1);
@@ -200,7 +185,7 @@ function UserrecordDAO(db) {
 	
 	this.getSocial = function(username, callback) {
         "use strict";
-        userrecord.findOne({'creator': username}, {'social':1, '_id': 0},function(err, social1) {
+        Transaction.findOne({'creator': username}, {'social':1, '_id': 0},function(err, social1) {
             "use strict";
 
 			console.log(social1);
@@ -212,7 +197,7 @@ function UserrecordDAO(db) {
 	
 	this.getHome = function(username, callback) {
         "use strict";
-        userrecord.findOne({'creator': username}, {'home':1, '_id': 0},function(err, home1) {
+        Transaction.findOne({'creator': username}, {'home':1, '_id': 0},function(err, home1) {
             "use strict";
 
 			console.log(home1);
@@ -225,7 +210,7 @@ function UserrecordDAO(db) {
 	this.getgallerylist = function(username, callback) {
         "use strict";
 		
-        userrecord.findOne({'creator': username}, {'gallery':1, '_id': 0},function(err, home1) {
+        Transaction.findOne({'creator': username}, {'gallery':1, '_id': 0},function(err, home1) {
             "use strict";
 
 			console.log(home1);
@@ -238,7 +223,7 @@ function UserrecordDAO(db) {
 	this.getnotificationlist = function(username, callback) {
         "use strict";
 		
-        userrecord.findOne({'creator': username}, {'notifications':1, '_id': 0},function(err, home1) {
+        Transaction.findOne({'creator': username}, {'notifications':1, '_id': 0},function(err, home1) {
             "use strict";
 
 			console.log(home1);
@@ -251,7 +236,7 @@ function UserrecordDAO(db) {
 	this.getvenue = function(username, callback) {
         "use strict";
 		
-        userrecord.findOne({'creator': username}, {'venue':1, '_id': 0},function(err, home1) {
+        Transaction.findOne({'creator': username}, {'venue':1, '_id': 0},function(err, home1) {
             "use strict";
 
 			console.log(home1);
@@ -262,10 +247,10 @@ function UserrecordDAO(db) {
     }
 	
 	
-	this.getuserrecorddetails = function(username, callback) {
+	this.getTransactiondetails = function(username, callback) {
         "use strict";
 		
-        userrecord.findOne({'creator': username}, {'venue':1, 'home':1,'gallery':1, 'notifications':1,'agenda':1, '_id': 0},function(err, home1) {
+        Transaction.findOne({'creator': username}, {'venue':1, 'home':1,'gallery':1, 'notifications':1,'agenda':1, '_id': 0},function(err, home1) {
             "use strict";
 
 			console.log(home1);
@@ -274,7 +259,7 @@ function UserrecordDAO(db) {
             callback(null, home1);
         }); 
     }
-	this.loaduserrecord = function(id, callback) {
+	this.loadTransaction = function(id, callback) {
         "use strict";
 		
 					var query = {};
@@ -284,7 +269,7 @@ function UserrecordDAO(db) {
 	var o_id = new ObjectID(id);
 
 
-        userrecord.findOne( {'_id': o_id}, {'venue':1, 'home':1,'gallery':1, 'notifications':1,'agenda':1, '_id': 0},function(err, home1) {
+        Transaction.findOne( {'_id': o_id}, {'venue':1, 'home':1,'gallery':1, 'notifications':1,'agenda':1, '_id': 0},function(err, home1) {
             "use strict";
 
 			console.log(home1);
@@ -299,13 +284,13 @@ function UserrecordDAO(db) {
 
 		var pattern  = "/" + str + "/" + "i";
 		  console.log("Pattern " + pattern);
-        //userrecord.find({ 'home.name' : {$regex : pattern} }).limit(num).toArray(function(err, items) {
+        //Transaction.find({ 'home.name' : {$regex : pattern} }).limit(num).toArray(function(err, items) {
 			
 		
 				
-	//		userrecord.find({ 'home.name' : new RegExp(str) }, {'home.name':1}, function(err, items) {
+	//		Transaction.find({ 'home.name' : new RegExp(str) }, {'home.name':1}, function(err, items) {
 			
-		userrecord.find({ 'home.name' : new RegExp(str) } , {'home.name':1}).toArray(function(err, items) {
+		Transaction.find({ 'home.name' : new RegExp(str) } , {'home.name':1}).toArray(function(err, items) {
             "use strict";
 
             if (err) return callback(err, null);
@@ -321,7 +306,7 @@ function UserrecordDAO(db) {
 	this.getagenda = function(username, callback) {
         "use strict";
 		
-        userrecord.findOne({'creator': username}, {'agenda':1, '_id': 0},function(err, home1) {
+        Transaction.findOne({'creator': username}, {'agenda':1, '_id': 0},function(err, home1) {
             "use strict";
 
 			console.log(home1);
@@ -336,7 +321,7 @@ function UserrecordDAO(db) {
 	 this.insertEntry = function (username, callback) {
         "use strict";
         
-		var companyuserrecord = {
+		var companyTransaction = {
 		 "home" : {
 	  		},
 		"agenda":{
@@ -352,7 +337,7 @@ function UserrecordDAO(db) {
   creator : username
 		};
   
-		userrecord.insert(companyuserrecord,{w:1}, function (err, result) {
+		Transaction.insert(companyTransaction,{w:1}, function (err, result) {
             "use strict";
 
             if (!err) {
@@ -370,7 +355,7 @@ function UserrecordDAO(db) {
 	
 	this.addSocial = function(username, social, callback) {
         "use strict";
-		  userrecord.findOne({'creator': username}, function(err, record) {
+		  Transaction.findOne({'creator': username}, function(err, record) {
             "use strict";
 
             if (err) return callback(err, null);
@@ -379,7 +364,7 @@ function UserrecordDAO(db) {
 			var query = {};
 			query['_id'] = record['_id'];
 			
-			userrecord.update(query, {$set: { social:social}}, function (err){
+			Transaction.update(query, {$set: { social:social}}, function (err){
 
 			if (err) return callback (err, null);
 			callback(null, 1);
@@ -392,7 +377,7 @@ function UserrecordDAO(db) {
 
 		this.addHome = function(username, home, callback) {
         "use strict";
-		  userrecord.findOne({'creator': username}, function(err, record) {
+		  Transaction.findOne({'creator': username}, function(err, record) {
             "use strict";
 
             if (err) return callback(err, null);
@@ -401,7 +386,7 @@ function UserrecordDAO(db) {
 			var query = {};
 			query['_id'] = record['_id'];
 			
-			userrecord.update(query, {$set: { home:home}}, function (err){
+			Transaction.update(query, {$set: { home:home}}, function (err){
 
 			if (err) return callback (err, null);
 			callback(null, 1);
@@ -416,7 +401,7 @@ function UserrecordDAO(db) {
 	
 	this.addAgenda = function(username, agenda, callback) {
         "use strict";
-		  userrecord.findOne({'creator': username}, function(err, record) {
+		  Transaction.findOne({'creator': username}, function(err, record) {
             "use strict";
 
             if (err) return callback(err, null);
@@ -425,7 +410,7 @@ function UserrecordDAO(db) {
 			var query = {};
 			query['_id'] = record['_id'];
 			
-			userrecord.update(query, {$set: { agenda:agenda}}, function (err){
+			Transaction.update(query, {$set: { agenda:agenda}}, function (err){
 
 			if (err) return callback (err, null);
 			callback(null, 1);
@@ -440,7 +425,7 @@ function UserrecordDAO(db) {
 	
 	this.addVenue = function(username, venue, callback) {
         "use strict";
-		  userrecord.findOne({'creator': username}, function(err, record) {
+		  Transaction.findOne({'creator': username}, function(err, record) {
             "use strict";
 
             if (err) return callback(err, null);
@@ -449,7 +434,7 @@ function UserrecordDAO(db) {
 			var query = {};
 			query['_id'] = record['_id'];
 			
-			userrecord.update(query, {$set: { venue:venue}}, function (err){
+			Transaction.update(query, {$set: { venue:venue}}, function (err){
 
 			if (err) return callback (err, null);
 			callback(null, 1);
@@ -466,7 +451,7 @@ function UserrecordDAO(db) {
 	
 		this.addGallery = function(username, gallery, callback) {
         "use strict";
-		  userrecord.findOne({'creator': username}, function(err, record) {
+		  Transaction.findOne({'creator': username}, function(err, record) {
             "use strict";
 
             if (err) return callback(err, null);
@@ -475,7 +460,7 @@ function UserrecordDAO(db) {
 			var query = {};
 			query['_id'] = record['_id'];
 			
-			userrecord.update(query, {$push: { gallery:gallery}}, function (err){
+			Transaction.update(query, {$push: { gallery:gallery}}, function (err){
 
 			if (err) return callback (err, null);
 			callback(null, 1);
@@ -491,7 +476,7 @@ function UserrecordDAO(db) {
 
 		this.addNotification = function(username, notification, callback) {
         "use strict";
-		  userrecord.findOne({'creator': username}, function(err, record) {
+		  Transaction.findOne({'creator': username}, function(err, record) {
             "use strict";
 
             if (err) return callback(err, null);
@@ -500,7 +485,7 @@ function UserrecordDAO(db) {
 			var query = {};
 			query['_id'] = record['_id'];
 			
-			userrecord.update(query, {$push: { notifications:notification}}, function (err){
+			Transaction.update(query, {$push: { notifications:notification}}, function (err){
 
 			if (err) return callback (err, null);
 			callback(null, 1);
@@ -629,4 +614,4 @@ function UserrecordDAO(db) {
 	*/
 }
 
-module.exports.UserrecordDAO = UserrecordDAO;
+module.exports.TransactionDAO = TransactionDAO;

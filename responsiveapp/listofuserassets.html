@@ -24,7 +24,7 @@
 	</div> <div class="form-group">
 	<label>Asset owner address </label>{{asset.asset.asset.issueAddress}}	
      </div> <div class="form-group">         
-											<button ng-click="commitasset(asset)" >Commit asset creation (need to be fixed to avoid resubmits)</button>
+											<button ng-click="commitasset(asset)" ng-show="asset.txid == null">Commit asset creation (need to be fixed to avoid resubmits)</button>
       </div>                                          
     </div>
 	

@@ -65,7 +65,7 @@ function AssetstoreDAO(db) {
 		
 
         "use strict";
-		  Assetstore.findOne({'username': username}, function(err, record) {
+		  Assetstore.findOne({'asset.txHex': data.txHex}, function(err, record) {
             "use strict";
 
             if (err) return callback(err, null);
@@ -75,7 +75,7 @@ function AssetstoreDAO(db) {
 			query['_id'] = record['_id'];
 				
 			record.assetId = data.assetId;
-			record.asset = data;
+			record.txid = data.txid;
 			
 			
 			Assetstore.update(query, {$set: record}, function (err){
@@ -87,29 +87,8 @@ function AssetstoreDAO(db) {
 		  }
 		  else {
 		
-			var objecttoinsert = {
-			username : username,
-			network : '',
-			assetId: '',
-			asset: {}
-			
-			};
-		
-			objecttoinsert.network = data.network;
-			objecttoinsert.assetId = data.assetId;
-			objecttoinsert.asset = data;
-			
-			Assetstore.insert(objecttoinsert,{w:1}, function (err, result) {
-            "use strict";
-
-            if (!err) {
-                console.log("Inserted new asset");
-                return callback(null, result);
-            }
-
-            return callback(err, null);
-			});
-		
+		var err = "asset record not found, check";
+			return callback(err, 1);
 
 		
 		  }

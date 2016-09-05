@@ -10,6 +10,7 @@ var UsersDAO = require('../users').UsersDAO
   , AssetstoreDAO = require('../assets').AssetstoreDAO
   , KeystoreDAO = require('../keystore').KeystoreDAO
   , UserrecordDAO = require('../userrecord').UserrecordDAO
+  , TransactionDAO = require('../transaction').TransactionDAO
   , ConfappDAO = require('../confapp').ConfappDAO;
 
 /* 
@@ -75,6 +76,8 @@ function SessionColored (db) {
 	var keystore = new KeystoreDAO(db);
 	var assetstore = new AssetstoreDAO(db);
 	var userrecord = new UserrecordDAO(db);
+	var transaction = new TransactionDAO(db);
+	
 	var uploadedimage = "";
 
     this.isLoggedInMiddleware = function(req, res, next) {
@@ -991,6 +994,34 @@ this.getgallerylist = function(req, res, next) {
 		
     
 	}
+	
+	this.gettransaction = function(req, res) {
+        "use strict";
+
+		var txHex = req.body.asset.txHex;
+		var assetId = req.body.asset.assetId;
+			   
+		var obj ={
+			txHex: txHex,
+			assetId: assetId
+		};
+        transaction.getrecord(obj, function(err, record) {
+            "use strict";
+
+            if (err) {
+              
+			  
+			  return res.json(err);
+			}
+			else {
+				return res.json(record);
+			}
+            
+        });
+		
+    
+	}
+	
 
 	this.getassetowner = function(req, res) {
         "use strict";
@@ -1081,6 +1112,12 @@ var utxo = txid+':1'
   
 			//var unsignedTx = txHex;
 
+			var obj = {
+				issueAddress: issueAddress,
+				txHex: txHex,
+				assetId: assetId
+				
+			};
 
 			userrecord.getrecordbyaddress(issueAddress,function(err, object) {
 			if(err) return res.json({error:err});
@@ -1106,9 +1143,22 @@ var utxo = txid+':1'
 			console.log('signed: '+signedTxHex)
 
 			postToApi('broadcast',data_params,function(err, body){
-				if (err) console.log('error: '+err);
-				
-					res.json(body);
+				if (err) {return console.log('error: '+err); }
+
+					var obj = {
+						username: username,
+					txid: body.txid,
+					assetId: assetId,
+					txHex: txHex
+					
+					};
+					assetstore.updateasset(username, obj,function(err, object) {
+						if(err) return res.json({error:err});
+						else {
+							return res.json(object);
+						}
+					});
+					
 			});
 
 			

@@ -110,6 +110,8 @@ module.exports = exports = function(app, db) {
 	
 	app.post('/hackathon/signasset', sessioncolored.signasset);
 	app.post('/hackathon/getaddressbalance', sessioncolored.getaddressbalance);
+	app.post('/hackathon/gettransaction', sessioncolored.gettransaction);
+	
 	
 	
 	
