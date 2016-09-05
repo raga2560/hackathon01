@@ -21,21 +21,10 @@
 	
 	
 	
-	
-
-
-
-
-	 <div class="form-group">
-			<label>Terms for sellers </label>
-			<pre style="overflow-x:scroll; overflow-y:scroll;  height: 15pc">
-			{{management.sellerterms}}
-			</pre>
-
-    </div>
-	
-	<button  class="btn btn-default" ng-click="agree()">Agree</button>
-
+	<div class="form-group">
+	<label class="label label-danger" ng-show="error"> {{error}} </label>
+	<button  class="btn btn-default" ng-click="createseller()">Register</button>
+</div>
 	 
 </div>
 </div>

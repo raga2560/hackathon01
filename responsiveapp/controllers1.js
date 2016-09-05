@@ -20,7 +20,7 @@ angular.module('myapp.controllers1', [])
 			network:'testnet' 
 		 };
 		 
-		 $http.post('/hackathon/createasset', obj).then(function(response) {
+		 $http.post('/hackathon/createtestasset', obj).then(function(response) {
 	  
 		//$scope.testnet = response.data.testnet;
 		

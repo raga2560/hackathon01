@@ -29,9 +29,12 @@
       Seller registration (in progress)
       <ul class="well">
 	  
-	  <li><a ui-sref="sellerregistration">Register as seller in trading event</a></li>
+	  <li><a ui-sref="sellerregistration">Register as seller </a></li>
+	  <li><a ui-sref="sellerapply">Seller apply for trading event</a></li>
 	   <li><a ui-sref="assetroute">Asset debug (ready)</a></li>
+	   <li><a ui-sref="loadmoney"> Load money to pay for asset registration, registration to event</a></li>
 	   <li><a ui-sref="assetregistration">Asset registration</a></li>
+	   <li><a ui-sref="assetapply">Asset apply for event</a></li>
 	   <li><a ui-sref="sellerassetprice">Seller asset price change </a></li>
         
 		
@@ -39,7 +42,8 @@
 		
 		Bidder registration (in progress)
       <ul class="well">
-	   <li><a ui-sref="buyerregistration">Register as buyer in trading event</a></li>
+	   <li><a ui-sref="buyerregistration">Register as buyer </a></li>
+	   <li><a ui-sref="buyerapply">Buyer apply for trading event</a></li>
 	   <li><a ui-sref="buyerassetprice">Buyer Price change </a></li>
 	  
 	  </ul>
@@ -152,6 +156,29 @@
             
         })
 
+		 .state('loadmoney', {
+            url: "/loadmoney",
+			views: {
+                "view1": {
+                    
+					templateUrl: "loadmoney.html",
+					 controller: 'SellerRegistrationCtrl'
+					 
+					
+                }
+				,
+				"view2": {
+                    
+					templateUrl: "sellerlistbalance.html",
+					 controller: 'SellerRegistrationCtrl'
+		 
+					 
+					
+                }
+            }
+			
+            
+        })
 		.state('assetroute', {
             url: "/assetroute",
 			views: {
@@ -236,7 +263,7 @@
 			views: {
                 "view2": {
                     
-					templateUrl: "listofassets.html",
+					templateUrl: "listofuserassets.html",
 					 controller: 'AssetRegistrationCtrl'
                 },
 				"view1": {
@@ -270,7 +297,7 @@
 			views: {
                 "view2": {
                     
-					templateUrl: "listofevents.html",
+					templateUrl: "sellerlistofevents.html",
 					 controller: 'SellerRegistrationCtrl'
                 },
 				"view1": {
@@ -280,6 +307,58 @@
                 }
 			  }
 			})
+		
+		.state('sellerapply', {
+              url: "/sellerapply",
+			
+			views: {
+                "view2": {
+                    
+					templateUrl: "sellerlistofevents.html",
+					 controller: 'SellerRegistrationCtrl'
+                },
+				"view1": {
+                    
+					templateUrl: "sellerapply.html",
+					 controller: 'SellerRegistrationCtrl'
+                }
+			  }
+			})
+			
+			.state('assetapply', {
+              url: "/assetapply",
+			
+			views: {
+                "view2": {
+                    
+					templateUrl: "listofassets.html",
+					 controller: 'AssetRegistrationCtrl'
+                },
+				"view1": {
+                    
+					templateUrl: "assetapply.html",
+					 controller: 'AssetRegistrationCtrl'
+                }
+			  }
+			})
+			
+			.state('buyerapply', {
+              url: "/applyapply",
+			
+			views: {
+                "view2": {
+                    
+					templateUrl: "listofevents.html",
+					 controller: 'BuyerRegistrationCtrl'
+                },
+				"view1": {
+                    
+					templateUrl: "buyerapply.html",
+					 controller: 'BuyerRegistrationCtrl'
+                }
+			  }
+			})
+		
 		
 		 .state('buyerregistration', {
               url: "/buyerregistration",
@@ -292,7 +371,7 @@
                 },
 				"view1": {
                     
-					templateUrl: "createsellerdetails.html",
+					templateUrl: "createbuyerdetails.html",
 					 controller: 'BuyerRegistrationCtrl'
                 }
 			  }

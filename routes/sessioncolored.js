@@ -9,6 +9,7 @@ var UsersDAO = require('../users').UsersDAO
   , VisualappDAO = require('../visualapp').VisualappDAO
   , AssetstoreDAO = require('../assets').AssetstoreDAO
   , KeystoreDAO = require('../keystore').KeystoreDAO
+  , UserrecordDAO = require('../userrecord').UserrecordDAO
   , ConfappDAO = require('../confapp').ConfappDAO;
 
 /* 
@@ -73,6 +74,7 @@ function SessionColored (db) {
 	var visualapp = new VisualappDAO(db);
 	var keystore = new KeystoreDAO(db);
 	var assetstore = new AssetstoreDAO(db);
+	var userrecord = new UserrecordDAO(db);
 	var uploadedimage = "";
 
     this.isLoggedInMiddleware = function(req, res, next) {
@@ -1003,6 +1005,11 @@ this.getgallerylist = function(req, res, next) {
 	
 	}
 	
+	
+	
+	
+	
+	
 	this.getassetdetail = function(req, res) {
         "use strict";
 
@@ -1023,6 +1030,99 @@ var utxo = txid+':1'
 	
 	}
 
+	
+	this.updatetx = function(req, res) {
+        "use strict";
+
+       
+	   var assetId = req.body.assetId;
+	   
+		var txid = req.body.txid;
+		
+		var obj = req.body;
+		
+		var session_id = req.cookies.session;
+        sessions.getUsername(session_id, function(err, username1) {
+            "use strict";
+
+            if (!err && username1) {
+              var  username = username1;
+  
+			assetstore.updateasset(username, data, function(err, obj) {
+				if (err) return res.json({error:err});
+				return res.json(obj);
+				});
+			}else {
+				
+				return res.json({error:err});
+			}
+		});
+	}
+  
+  
+	this.signasset = function(req, res) {
+        "use strict";
+
+       
+	   var asset = req.body.asset;
+	   var issueAddress = asset.asset.issueAddress;
+		var txHex = req.body.asset.txHex;
+		var assetId = req.body.asset.assetId;
+		
+		console.log("asset="+asset);
+		console.log("issueAddress="+issueAddress);
+		
+		var session_id = req.cookies.session;
+        sessions.getUsername(session_id, function(err, username1) {
+            "use strict";
+
+            if (!err && username1) {
+              var  username = username1;
+  
+			//var unsignedTx = txHex;
+
+
+			userrecord.getrecordbyaddress(issueAddress,function(err, object) {
+			if(err) return res.json({error:err});
+			else {
+				
+				console.log("txHex="+txHex);
+				console.log(object);
+				
+				
+				var key1 = object.record.testnet.privatekey ;
+			
+				var key = bitcoin.ECKey.fromWIF(key1);
+
+			var sign = signTx(txHex,key);
+
+			console.log('Signed: '+sign);
+			var signedTxHex = sign;
+			
+			var data_params = {
+			'txHex': signedTxHex
+			};
+
+			console.log('signed: '+signedTxHex)
+
+			postToApi('broadcast',data_params,function(err, body){
+				if (err) console.log('error: '+err);
+				
+					res.json(body);
+			});
+
+			
+            }
+			});
+			
+			}
+		});
+			
+		
+	
+    }
+			
+			
 	this.signandsendasset = function(req, res) {
         "use strict";
 
@@ -1115,6 +1215,25 @@ after issuing asset below
 				
 
 	}
+	
+	this.getaddressbalance = function(req, res) {
+        "use strict";
+		
+		
+		var address = req.body.address; //'mpP6iqSDweyTFHTUZAo4ZVX5MJkhr4GAnT';
+
+				getApi('addressinfo', address , function(err, body) {
+
+    if (err) console.log('error: ', err)
+		res.json(body);
+		});
+
+
+				
+				
+
+	}
+	
     
 	this.gettestnetassets = function(req, res) {
         "use strict";
@@ -1147,6 +1266,107 @@ after issuing asset below
 	 
 	
 	this.createasset = function(req, res) {
+        "use strict";
+
+     var network = req.body.network;
+	 var ownerid = req.body.ownerid;
+		
+		var session_id = req.cookies.session;
+        sessions.getUsername(session_id, function(err, username1) {
+            "use strict";
+
+            if (!err && username1) {
+              var  username = username1;
+            
+			
+		   console.log("username="+username);
+		   
+           userrecord.getrecordbyid(ownerid,function(err, object) {
+			if(err) return res.json({error:err});
+			else {
+				
+				console.log(object);
+				
+				//var key1 = 'L32oQn3Df8nvCoZiNnfTeRhC8rVjtC1tAMeDk9ovxBPWardxT5tT';
+				//var address1 = 'mnZzLW7SFi1zfGD8RBRZkyV8EQps1rmBLE';
+				
+				var key1 = object.record.testnet.privatekey ;
+				var address1 = object.record.testnet.address ;
+
+
+				var asset = {
+				'issueAddress': address1,
+				'amount': 100,
+				'divisibility': 0,
+				'fee': 5000,
+				'reissueable': false,
+				'transfer': [{
+				'address': address1,
+					'amount': 100
+				}],
+				'metadata': {
+					'assetId': req.body.assetnumber,
+					'assetName': req.body.title,
+					'issuer': req.body.ownername,
+					'description': req.body.description,
+				'userData': {
+					'meta' : [
+					{key: 'Item ID', value: 1, type: 'Number'},
+					{key: 'Item Name', value: 'Item Name', type: 'String'},
+					{key: 'Company', value: 'My Company', type: 'String'},
+					{key: 'Address', value: 'San Francisco, CA', type: 'String'}
+					]
+				}
+			}
+			};
+
+			postToApi('issue', asset, function(err, body){
+				if (err || body== null) {
+					console.log('error: ',err);
+				}else {
+					console.log('issue: ',body);
+					if(body.txHex != null) {
+				var data = {
+					network : network,
+					assetId : body.assetId,
+					txHex : body.txHex,
+					asset: asset
+					
+				};
+				assetstore.insertasset(username, data, function(err, obj) {
+				if (err) return res.json({error:err});
+				return res.json(obj);
+				});
+					} else {
+						return res.json(body);
+					}
+			  }
+			});
+				
+		//			res.json(body);
+			
+
+
+				
+				
+				
+				
+				
+			
+			}
+			
+		});
+		
+			}
+			else {
+				if (err) return res.json({error:err});
+			}
+            
+        });
+	
+    }
+	
+	this.createtestasset = function(req, res) {
         "use strict";
 
      var network = req.body.network;

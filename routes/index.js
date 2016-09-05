@@ -2,6 +2,7 @@ var SessionHandler = require('./session')
   , ContentHandler = require('./content')
   , SessionMobileHandler = require('./sessionmobile')
   , Sessioncolored = require('./sessioncolored')
+  , Management = require('./management')
   , ErrorHandler = require('./error').errorHandler;
 
 module.exports = exports = function(app, db) {
@@ -10,6 +11,7 @@ module.exports = exports = function(app, db) {
     var contentHandler = new ContentHandler(db);
 	var sessionmobileHandler = new SessionMobileHandler(db);
 	var sessioncolored = new Sessioncolored(db);
+	var management = new Management(db);
 
     // Middleware to see if a user is logged in
     app.use(sessionHandler.isLoggedInMiddleware);
@@ -92,12 +94,24 @@ module.exports = exports = function(app, db) {
 	app.post('/hackathon/createkeys', sessioncolored.createkeys);
 	app.get('/hackathon/getkeys', sessioncolored.getkeys);
 	
-	app.post('/hackathon/createasset', sessioncolored.createasset);
+	app.post('/hackathon/createtestasset', sessioncolored.createtestasset);
 	app.get('/hackathon/getaddresscontents', sessioncolored.getaddresscontents);
 	app.post('/hackathon/gettestnetassets', sessioncolored.gettestnetassets);
 	app.post('/hackathon/signandsendasset', sessioncolored.signandsendasset);
 	app.post('/hackathon/getassetowner', sessioncolored.getassetowner);
 	app.post('/hackathon/getassetdetail', sessioncolored.getassetdetail);
+	app.post('/hackathon/createevent', management.createevent);
+	app.post('/hackathon/createseller', management.createseller);
+	app.post('/hackathon/createbuyer', management.createbuyer);
+	app.get('/hackathon/listevents', management.listevents);
+	app.get('/hackathon/listowners', management.getowners);
+	app.post('/hackathon/createasset', sessioncolored.createasset);
+	app.post('/hackathon/updatetx', sessioncolored.updatetx);
+	
+	app.post('/hackathon/signasset', sessioncolored.signasset);
+	app.post('/hackathon/getaddressbalance', sessioncolored.getaddressbalance);
+	
+	
 	
 	
 	
