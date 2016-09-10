@@ -1,15 +1,15 @@
-/* The eventstoreDAO must be constructed with a connected database object */
-function EventstoreDAO(db) {
+/* The escrowstoreDAO must be constructed with a connected database object */
+function EscrowstoreDAO(db) {
     "use strict";
 
     /* If this constructor is called without the "new" operator, "this" points
      * to the global object. Log a warning and call it correctly. */
-    if (false === (this instanceof EventstoreDAO)) {
-        console.log('Warning: eventstoreDAO constructor called without "new" operator');
-        return new EventstoreDAO(db);
+    if (false === (this instanceof EscrowstoreDAO)) {
+        console.log('Warning: escrowstoreDAO constructor called without "new" operator');
+        return new EscrowstoreDAO(db);
     }
 
-    var eventstore = db.collection("events");
+    var escrowstore = db.collection("escrow");
 	/*
 	Format
 	{username:'', eventid:'','event': {,}}
@@ -51,7 +51,7 @@ function EventstoreDAO(db) {
 			
 						
 			
-			eventstore.insert(objecttoinsert,{w:1}, function (err, result) {
+			escrowstore.insert(objecttoinsert,{w:1}, function (err, result) {
             "use strict";
 
             if (!err) {
@@ -71,7 +71,7 @@ function EventstoreDAO(db) {
 		
 
         "use strict";
-		  eventstore.findOne({'username': username}, function(err, record) {
+		  escrowstore.findOne({'username': username}, function(err, record) {
             "use strict";
 
             if (err) return callback(err, null);
@@ -84,7 +84,7 @@ function EventstoreDAO(db) {
 			record.event = data;
 			
 			
-			eventstore.update(query, {$set: record}, function (err){
+			escrowstore.update(query, {$set: record}, function (err){
 
 			if (err) return callback (err, null);
 			callback(null, 1);
@@ -105,7 +105,7 @@ function EventstoreDAO(db) {
 			objecttoinsert.eventid = data.eventid;
 			objecttoinsert.event = data;
 			
-			eventstore.insert(objecttoinsert,{w:1}, function (err, result) {
+			escrowstore.insert(objecttoinsert,{w:1}, function (err, result) {
             "use strict";
 
             if (!err) {
@@ -130,51 +130,153 @@ function EventstoreDAO(db) {
     }
 	
 	
-	this.findbuyer = function (eventaddress, data, callback) {
+	this.setescrowstructure = function (data, callback) {
         "use strict";
         
-		var useraddress = data.user.record.testnet.address;
+		var eventaddress = data.eventaddress;
+		var useraddress = data.useraddress;
+		var assetId = data.assetId;
+		var xxx = {
+					network: 'testnet',
+					eventaddress : eventaddress,
+					escrowdata: data.data,
+					assets:[],
+					buyers:[],
+					policy: {},
+					returnedassets :[],
+					sentassetstobuyer :[]
+				};
+				
+				
+				
+				escrowstore.insert(xxx,{w:1}, function (err, record) {
+            "use strict";
+			if(!err) {
+		return callback(null, record);
+            }else {
+				return callback(err, null);	
+			}
+				});
 
+		
+	
+	}
+	
+		this.setpolicyrate = function (data, callback) {
         "use strict";
-		  eventstore.findOne({'event.testnet.address': eventaddress}, function(err, record) {
+        
+		var eventaddress = data.eventaddress;
+		var minsellersneeded = data.minsellersneeded;
+		
+		
+
+		console.log('eventaddress='+ eventaddress);
+        "use strict";
+		  escrowstore.findOne({'eventaddress': eventaddress}, function(err, record) {
             "use strict";
 
             if (err) return callback(err, null);
 
+			console.log('record='+ record);
 			if( record != null) {
 			var query = {};
 			query['_id'] = record['_id'];
+			
+			
+			record.policy = data;
+			
+			escrowstore.update(query, {$set: record}, function (err){
+
+			if (err) return callback (err, null);
+			
+			callback(null, 1);
+			});
+			
+			}
+			else{
 				
+			  var err = "escrow record doesnot exist";
+					return callback(err, null);
+				
+			
+			
+			}		
+			
+			
+			
+        }); 
+		
+    }
+
+	
+	this.setbuyerprice = function (data, callback) {
+        "use strict";
+        
+		var eventaddress = data.eventaddress;
+		var useraddress = data.useraddress;
+		
+		
+
+		console.log('eventaddress='+ eventaddress);
+        "use strict";
+		  escrowstore.findOne({'eventaddress': eventaddress}, function(err, record) {
+            "use strict";
+
+            if (err) return callback(err, null);
+
+			console.log('record='+ record);
+			if( record != null) {
+			var query = {};
+			query['_id'] = record['_id'];
+			
+			var	found = false;
 			for(var i =0; i< record.buyers.length; i++) {
-				if(record.buyers[i].record.testnet.address == useraddress){
+				if(record.buyers[i].useraddress == useraddress){
 					
-					
-					var err = null;
-					return callback(err, record);
+					record.buyers[i] = data;
+					found = true;
+			
 				}
 			}
+			if(found == false)
+			{
+				record.buyers.push(data);
+			}
 			
-			 var err = "Buyer not applied for event";
-			  return callback(err, null);
-		  
-		  }
-		  else {
-			  var err = "Buyer not applied for event";
-			  return callback(err, null);
-		  }
-		
+			escrowstore.update(query, {$set: record}, function (err){
+
+			if (err) return callback (err, null);
+			
+			callback(null, 1);
+			});
+			
+			}
+			else{
+				
+			  var err = "escrow record doesnot exist";
+					return callback(err, null);
+				
+			
+			
+			}		
+			
+			
 			
         }); 
 		
     }
 	
-	this.findseller = function (eventaddress, data, callback) {
+	this.setsellerprice = function (data, callback) {
         "use strict";
         
-		var useraddress = data.user.record.testnet.address;
+		var eventaddress = data.eventaddress;
+		var useraddress = data.useraddress;
+		var assetId = data.assetId;
+		
+		
 
         "use strict";
-		  eventstore.findOne({'event.testnet.address': eventaddress}, function(err, record) {
+		  escrowstore.findOne({'eventaddress': eventaddress}, function(err, record) {
             "use strict";
 
             if (err) return callback(err, null);
@@ -182,38 +284,114 @@ function EventstoreDAO(db) {
 			if( record != null) {
 			var query = {};
 			query['_id'] = record['_id'];
-				
-			for(var i =0; i< record.sellers.length; i++) {
-				if(record.sellers[i].record.testnet.address == useraddress){
+			
+			var	found = false;
+			for(var i =0; i< record.assets.length; i++) {
+				if(record.assets[i].assetId == assetId){
 					
-					
-					var err = null;
-					return callback(err, record);
+					record.assets[i].price = data.price;
+					record.assets[i].status = 'active';
+					found = true;
+			
 				}
 			}
+			if(found == false)
+			{
+				var err = "AssetId is missing in escrow record. Asset is not applied for event. ";
+				
+				if (err) return callback (err, null);
+				//record.buyers.push(data);
+				
+			}
 			
-			 var err = "Seller not applied for event";
-			  return callback(err, null);
-		  
-		  }
-		  else {
-			  var err = "Seller not applied for event";
-			  return callback(err, null);
-		  }
-		
+			escrowstore.update(query, {$set: record}, function (err){
+
+			if (err) return callback (err, null);
+			
+			callback(null, 1);
+			});
+			
+			}
+			else{
+				
+			  var err = "escrow record doesnot exist";
+					return callback(err, null);
+				
+			
+			
+			}		
+			
+			
 			
         }); 
 		
     }
 	
+	this.getmatchreport = function (what, callback)
+	{
+		var query ;
+		var eventaddress;
+		var buyeraddress;
+		
+		var buyerrecord = {};
+		var charts ={
+			eventaddress: what.eventaddress,
+			buyeraddress: what.buyeraddress,
+			matchingsellers: '',
+			totalsellers: '',
+			eventname:what.eventname,
+			buyername:what.buyername,
+			policydemand: what.minsellersneeded,
+			buyerprice:what.buyerprice
+			
+		};
+		
+		  escrowstore.findOne({'eventaddress': what.eventaddress}, function(err, record) {
+            "use strict";
+
+            if (err || record== null) return callback(err, null);
+
+			if( record != null) {
+		
+			for(var i =0; i< record.buyers.length; i++) {
+				if(record.buyers[i].useraddress == what.buyeraddress){
+					
+					
+					buyerrecord = record.buyers[i];
+					break;
+				}
+			}
+			if(buyerrecord == null) return callback(err, null);
+			console.log("buyerrecord="+JSON.stringify(buyerrecord));
+			console.log("record="+JSON.stringify(record))
+			charts.totalsellers = record.assets.length;
+			var matching = 0;
+			for(var i =0 ; i< record.assets.length; i++){
+			 if(buyerrecord.price >= record.assets[i].price){
+				matching ++; 
+			 }
+			}
+
+			charts.matchingsellers = matching;
+			charts.policydemand = (what.minsellersneeded/100) * charts.totalsellers;
+			
+             callback(null, charts);
+			}
+        });
+		
+	}
 	
-	this.insertbuyer = function (eventaddress, data, callback) {
+	
+	this.insertasset = function (data, callback) {
         "use strict";
         
-		var useraddress = data.user.record.testnet.address;
+		var eventaddress = data.eventaddress;
+		var useraddress = data.useraddress;
+		var assetId = data.assetId;
+		
 
         "use strict";
-		  eventstore.findOne({'event.testnet.address': eventaddress}, function(err, record) {
+		  escrowstore.findOne({'eventaddress': eventaddress}, function(err, record) {
             "use strict";
 
             if (err) return callback(err, null);
@@ -222,8 +400,8 @@ function EventstoreDAO(db) {
 			var query = {};
 			query['_id'] = record['_id'];
 				
-			for(var i =0; i< record.buyers.length; i++) {
-				if(record.buyers[i].record.testnet.address == useraddress){
+			for(var i =0; i< record.assets.length; i++) {
+				if(record.assets[i].assetId == assetId){
 					
 					
 					var err = "userrecord exists for user";
@@ -231,21 +409,29 @@ function EventstoreDAO(db) {
 				}
 			}
 			
-			
-			
-			eventstore.update(query, {$push: {buyers: data.user}}, function (err){
+			  escrowstore.update(query, {$push: {assets: data}}, function (err){
 
 			if (err) return callback (err, null);
 			
 			callback(null, 1);
 			});
-		  
-		  }
-		  else {
-			  var err = "event not found";
-			  return callback(err, null);
-		  }
-		
+			
+			}
+			else{
+				
+			  var err = "escrow record doesnot exist";
+					return callback(err, null);
+				
+			
+				
+                
+            
+			
+			
+			
+			}		
+			
+			
 			
         }); 
 		
@@ -259,7 +445,7 @@ function EventstoreDAO(db) {
 		var useraddress = data.user.record.testnet.address;
 
         "use strict";
-		  eventstore.findOne({'event.testnet.address': eventaddress}, function(err, record) {
+		  escrowstore.findOne({'event.testnet.address': eventaddress}, function(err, record) {
             "use strict";
 
             if (err) return callback(err, null);
@@ -279,7 +465,7 @@ function EventstoreDAO(db) {
 			
 			
 			
-			eventstore.update(query, {$push: {sellers: data.user}}, function (err){
+			escrowstore.update(query, {$push: {sellers: data.user}}, function (err){
 
 			if (err) return callback (err, null);
 			
@@ -298,43 +484,10 @@ function EventstoreDAO(db) {
     }
 	
 
-	this.listtable = function(name,operation, callback) {
+	this.listescrow = function(username, callback) {
         "use strict";
 		
-		if(operation == 'list'){
-			eventstore.find({}).toArray(function(err, data) {
-            "use strict";
-
-			//console.log(home1);
-            if (err) return callback(err, null);
-
-            callback(null, data);
-        }); 
-
-		
-		}
-		if(operation == 'remove1'){
-			eventstore.deleteMany({}, (function(err, data) {
-            "use strict";
-
-			//console.log(home1);
-            if (err) return callback(err, null);
-
-            callback(null, data);
-        })); 
-
-		
-		}
-		var err ="not implemented";
-		return callback(err, null);
-        
-    }
-	
-	
-	this.listevents = function(username, callback) {
-        "use strict";
-		
-        eventstore.find({}).toArray(function(err, data) {
+        escrowstore.find({}).toArray(function(err, data) {
             "use strict";
 
 			console.log(data);
@@ -347,7 +500,7 @@ function EventstoreDAO(db) {
 	this.getoneevent = function(username, eventid, callback) {
         "use strict";
 		
-        eventstore.findOne( {'username': username, 'eventid': eventid},function(err, data) {
+        escrowstore.findOne( {'username': username, 'eventid': eventid},function(err, data) {
             "use strict";
 
 			console.log(data);
@@ -360,7 +513,7 @@ function EventstoreDAO(db) {
 	this.geteventids = function(username, callback) {
         "use strict";
 		username = "test15";
-        eventstore.findOne( {'creator': username}, {'home':1, '_id': 1},function(err, social1) {
+        escrowstore.findOne( {'creator': username}, {'home':1, '_id': 1},function(err, social1) {
             "use strict";
 
 			console.log(social1);
@@ -372,7 +525,7 @@ function EventstoreDAO(db) {
 	
 	this.getSocial = function(username, callback) {
         "use strict";
-        eventstore.findOne({'creator': username}, {'social':1, '_id': 0},function(err, social1) {
+        escrowstore.findOne({'creator': username}, {'social':1, '_id': 0},function(err, social1) {
             "use strict";
 
 			console.log(social1);
@@ -384,7 +537,7 @@ function EventstoreDAO(db) {
 	
 	this.getHome = function(username, callback) {
         "use strict";
-        eventstore.findOne({'creator': username}, {'home':1, '_id': 0},function(err, home1) {
+        escrowstore.findOne({'creator': username}, {'home':1, '_id': 0},function(err, home1) {
             "use strict";
 
 			console.log(home1);
@@ -397,7 +550,7 @@ function EventstoreDAO(db) {
 	this.getgallerylist = function(username, callback) {
         "use strict";
 		
-        eventstore.findOne({'creator': username}, {'gallery':1, '_id': 0},function(err, home1) {
+        escrowstore.findOne({'creator': username}, {'gallery':1, '_id': 0},function(err, home1) {
             "use strict";
 
 			console.log(home1);
@@ -410,7 +563,7 @@ function EventstoreDAO(db) {
 	this.getnotificationlist = function(username, callback) {
         "use strict";
 		
-        eventstore.findOne({'creator': username}, {'notifications':1, '_id': 0},function(err, home1) {
+        escrowstore.findOne({'creator': username}, {'notifications':1, '_id': 0},function(err, home1) {
             "use strict";
 
 			console.log(home1);
@@ -423,7 +576,7 @@ function EventstoreDAO(db) {
 	this.getvenue = function(username, callback) {
         "use strict";
 		
-        eventstore.findOne({'creator': username}, {'venue':1, '_id': 0},function(err, home1) {
+        escrowstore.findOne({'creator': username}, {'venue':1, '_id': 0},function(err, home1) {
             "use strict";
 
 			console.log(home1);
@@ -437,7 +590,7 @@ function EventstoreDAO(db) {
 	this.geteventdetails = function(username, callback) {
         "use strict";
 		
-        eventstore.findOne({'creator': username}, {'venue':1, 'home':1,'gallery':1, 'notifications':1,'agenda':1, '_id': 0},function(err, home1) {
+        escrowstore.findOne({'creator': username}, {'venue':1, 'home':1,'gallery':1, 'notifications':1,'agenda':1, '_id': 0},function(err, home1) {
             "use strict";
 
 			console.log(home1);
@@ -456,7 +609,7 @@ function EventstoreDAO(db) {
 	var o_id = new ObjectID(id);
 
 
-        eventstore.findOne( {'_id': o_id}, {'venue':1, 'home':1,'gallery':1, 'notifications':1,'agenda':1, '_id': 0},function(err, home1) {
+        escrowstore.findOne( {'_id': o_id}, {'venue':1, 'home':1,'gallery':1, 'notifications':1,'agenda':1, '_id': 0},function(err, home1) {
             "use strict";
 
 			console.log(home1);
@@ -471,13 +624,13 @@ function EventstoreDAO(db) {
 
 		var pattern  = "/" + str + "/" + "i";
 		  console.log("Pattern " + pattern);
-        //eventstore.find({ 'home.name' : {$regex : pattern} }).limit(num).toArray(function(err, items) {
+        //escrowstore.find({ 'home.name' : {$regex : pattern} }).limit(num).toArray(function(err, items) {
 			
 		
 				
-	//		eventstore.find({ 'home.name' : new RegExp(str) }, {'home.name':1}, function(err, items) {
+	//		escrowstore.find({ 'home.name' : new RegExp(str) }, {'home.name':1}, function(err, items) {
 			
-		eventstore.find({ 'home.name' : new RegExp(str) } , {'home.name':1}).toArray(function(err, items) {
+		escrowstore.find({ 'home.name' : new RegExp(str) } , {'home.name':1}).toArray(function(err, items) {
             "use strict";
 
             if (err) return callback(err, null);
@@ -493,7 +646,7 @@ function EventstoreDAO(db) {
 	this.getagenda = function(username, callback) {
         "use strict";
 		
-        eventstore.findOne({'creator': username}, {'agenda':1, '_id': 0},function(err, home1) {
+        escrowstore.findOne({'creator': username}, {'agenda':1, '_id': 0},function(err, home1) {
             "use strict";
 
 			console.log(home1);
@@ -524,7 +677,7 @@ function EventstoreDAO(db) {
   creator : username
 		};
   
-		eventstore.insert(companyevent,{w:1}, function (err, result) {
+		escrowstore.insert(companyevent,{w:1}, function (err, result) {
             "use strict";
 
             if (!err) {
@@ -542,7 +695,7 @@ function EventstoreDAO(db) {
 	
 	this.addSocial = function(username, social, callback) {
         "use strict";
-		  eventstore.findOne({'creator': username}, function(err, record) {
+		  escrowstore.findOne({'creator': username}, function(err, record) {
             "use strict";
 
             if (err) return callback(err, null);
@@ -551,7 +704,7 @@ function EventstoreDAO(db) {
 			var query = {};
 			query['_id'] = record['_id'];
 			
-			eventstore.update(query, {$set: { social:social}}, function (err){
+			escrowstore.update(query, {$set: { social:social}}, function (err){
 
 			if (err) return callback (err, null);
 			callback(null, 1);
@@ -564,7 +717,7 @@ function EventstoreDAO(db) {
 
 		this.addHome = function(username, home, callback) {
         "use strict";
-		  eventstore.findOne({'creator': username}, function(err, record) {
+		  escrowstore.findOne({'creator': username}, function(err, record) {
             "use strict";
 
             if (err) return callback(err, null);
@@ -573,7 +726,7 @@ function EventstoreDAO(db) {
 			var query = {};
 			query['_id'] = record['_id'];
 			
-			eventstore.update(query, {$set: { home:home}}, function (err){
+			escrowstore.update(query, {$set: { home:home}}, function (err){
 
 			if (err) return callback (err, null);
 			callback(null, 1);
@@ -588,7 +741,7 @@ function EventstoreDAO(db) {
 	
 	this.addAgenda = function(username, agenda, callback) {
         "use strict";
-		  eventstore.findOne({'creator': username}, function(err, record) {
+		  escrowstore.findOne({'creator': username}, function(err, record) {
             "use strict";
 
             if (err) return callback(err, null);
@@ -597,7 +750,7 @@ function EventstoreDAO(db) {
 			var query = {};
 			query['_id'] = record['_id'];
 			
-			eventstore.update(query, {$set: { agenda:agenda}}, function (err){
+			escrowstore.update(query, {$set: { agenda:agenda}}, function (err){
 
 			if (err) return callback (err, null);
 			callback(null, 1);
@@ -612,7 +765,7 @@ function EventstoreDAO(db) {
 	
 	this.addVenue = function(username, venue, callback) {
         "use strict";
-		  eventstore.findOne({'creator': username}, function(err, record) {
+		  escrowstore.findOne({'creator': username}, function(err, record) {
             "use strict";
 
             if (err) return callback(err, null);
@@ -621,7 +774,7 @@ function EventstoreDAO(db) {
 			var query = {};
 			query['_id'] = record['_id'];
 			
-			eventstore.update(query, {$set: { venue:venue}}, function (err){
+			escrowstore.update(query, {$set: { venue:venue}}, function (err){
 
 			if (err) return callback (err, null);
 			callback(null, 1);
@@ -638,7 +791,7 @@ function EventstoreDAO(db) {
 	
 		this.addGallery = function(username, gallery, callback) {
         "use strict";
-		  eventstore.findOne({'creator': username}, function(err, record) {
+		  escrowstore.findOne({'creator': username}, function(err, record) {
             "use strict";
 
             if (err) return callback(err, null);
@@ -647,7 +800,7 @@ function EventstoreDAO(db) {
 			var query = {};
 			query['_id'] = record['_id'];
 			
-			eventstore.update(query, {$push: { gallery:gallery}}, function (err){
+			escrowstore.update(query, {$push: { gallery:gallery}}, function (err){
 
 			if (err) return callback (err, null);
 			callback(null, 1);
@@ -663,7 +816,7 @@ function EventstoreDAO(db) {
 
 		this.addNotification = function(username, notification, callback) {
         "use strict";
-		  eventstore.findOne({'creator': username}, function(err, record) {
+		  escrowstore.findOne({'creator': username}, function(err, record) {
             "use strict";
 
             if (err) return callback(err, null);
@@ -672,7 +825,7 @@ function EventstoreDAO(db) {
 			var query = {};
 			query['_id'] = record['_id'];
 			
-			eventstore.update(query, {$push: { notifications:notification}}, function (err){
+			escrowstore.update(query, {$push: { notifications:notification}}, function (err){
 
 			if (err) return callback (err, null);
 			callback(null, 1);
@@ -801,4 +954,4 @@ function EventstoreDAO(db) {
 	*/
 }
 
-module.exports.EventstoreDAO = EventstoreDAO;
+module.exports.EscrowstoreDAO = EscrowstoreDAO;

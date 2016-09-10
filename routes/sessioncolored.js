@@ -1358,6 +1358,7 @@ after issuing asset below
 					'assetId': req.body.assetnumber,
 					'assetName': req.body.title,
 					'issuer': req.body.ownername,
+					'issueraddress': address1, 
 					'description': req.body.description,
 				'userData': {
 					'meta' : [
@@ -1380,6 +1381,9 @@ after issuing asset below
 					network : network,
 					assetId : body.assetId,
 					txHex : body.txHex,
+					assetName: req.body.title,
+					issuer: req.body.ownername,
+					issueraddress: address1, 
 					asset: asset
 					
 				};

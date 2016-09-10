@@ -1,17 +1,18 @@
-
+:
 
 
 <div class="panel panel-default">
                         <div class="panel-heading">
-                            Set govt policy for events
+                            Asset list
                         </div>
                         <div class="panel-body">
                             <div class="row">
                                 <div class="col-lg-12">
 								
-								<div class="form-group">
-                                            <label>Event</label> {{selectedevent}} </br>
-											<label>Event address</label> {{policy.eventaddress}} </br>
+								<ul >
+								
+  <div class="form-group">
+                                            <label>Event</label> {{selectedevent}}
                                             
     </div>
 	<div class="form-group">				
@@ -23,20 +24,27 @@
                                             
     </div>
 	
-								
-								
+  <li ng-repeat="asset in assets" ng-show="asset.assetId">
+  
  
-	
 	<div class="form-group">
-                                
-											<label>Set min percentage sellers</label>
-                                            <input type="number" class="form-control" placeholder="Enter percentage of approval needed" ng-model="policy.minsellersneeded"> 
-											
-											
-											<button  class="btn btn-default" ng-click="setpolicyrates()">Set policy rate</button>
-    </div>
 	
 	
+	<label>Asset number		 :</label>  {{asset.assetId}}	<label>Asset title		 :</label>  {{asset.assetname}}	</br>
+	
+	<label>Asset owner 		:</label>   {{asset.useraddress}}	<label>Owner name		 :</label>  {{asset.username}}	 </br>
+	
+	<label>Asset status : </label>{{asset.status}} <label>Asset price :</label>{{asset.price}}		</br>
+	
+	
+     </div>                                         
+    
+	
+	
+  
+  </li>
+</ul>
+
 
 	 
 </div>

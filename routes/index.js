@@ -104,15 +104,41 @@ module.exports = exports = function(app, db) {
 	app.post('/hackathon/createseller', management.createseller);
 	app.post('/hackathon/createbuyer', management.createbuyer);
 	app.get('/hackathon/listevents', management.listevents);
-	app.get('/hackathon/listowners', management.getowners);
+	app.get('/hackathon/listbuyerowners', management.getbuyerowners);
+	app.get('/hackathon/listsellerowners', management.getsellerowners);
+	
+	
+	app.post('/hackathon/getcharts', management.getcharts);
+	
+	
+	// Creates userrecord, creates asset details and issues 'asset' in blockchain.
 	app.post('/hackathon/createasset', sessioncolored.createasset);
+	
 	app.post('/hackathon/updatetx', sessioncolored.updatetx);
 	
+	// Each asset after being signed, has to be commited. Then it will be alloted for the bitcoin address
+	// commitasset() is called from responsiveapp\listofuserassets.html. This updates asset.txid, with the confirmed
+	// transaction
 	app.post('/hackathon/signasset', sessioncolored.signasset);
+	
+	
 	app.post('/hackathon/getaddressbalance', sessioncolored.getaddressbalance);
 	app.post('/hackathon/gettransaction', sessioncolored.gettransaction);
+	app.post('/hackathon/applyseller', management.applyseller);
+	app.post('/hackathon/applybuyer', management.applybuyer);
+	app.post('/hackathon/tableoperate', management.tableoperate);
+	app.get('/hackathon/getescrowlist', management.getescrowlist);
+	app.post('/hackathon/setpolicyrate', management.setpolicyrate);
 	
 	
+	// Below applyasset, will assign a particular asset for a event. This makes entry in escrow.assets[] for that asset.
+	app.post('/hackathon/applyasset', management.applyasset);
+	
+	// Below buyerpriceset, will set price offered by buyer for the group of assets. This updates prices in escrow.buyers[obj.price]
+	app.post('/hackathon/buyerpriceset', management.buyerpriceset);
+	
+	// Below sellerpriceset, will set price offered by seller for his asset. This updates prices in escrow.assets[obj.price for asset]
+	app.post('/hackathon/sellerpriceset', management.sellerpriceset);
 	
 	
 	
