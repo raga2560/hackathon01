@@ -728,6 +728,815 @@ $scope.createasset = function ()
    })
    
    
+ .controller('SellerpanelCtrl', function($scope, $http) {
+	 
+	$scope.sellerowners = [];
+	$scope.buyerowners = [];
+	$scope.assets = [];
+	$scope.selectedassets = [];
+	
+	$scope.events = [];	 
+		 
+		 
+		 $scope.assetapplication = {
+		  user: {},
+			event:{},
+			asset:{},
+			price:''
+		 };
+		 
+	 $scope.assetapp = {
+		title:'',
+		event:'',
+		buyername:'',
+		sellername:''
+	 };
+	 
+	 $scope.eventaddress ='';
+	 
+  $scope.escrowobject = {};
+	   $scope.bodytosend = {
+		eventaddress: '',
+			buyeraddress:'',
+			
+			eventname: '',
+			buyername: '',
+			minsellersneeded: '',
+			buyerprice:''
+			
+	   };
+	
+      $scope.chartdata = [];	
+
+	 
+	 $scope.listevents = function ()
+	 {
+		 var obj = {
+			network:'testnet' 
+		 };
+		 
+		 
+		 $http.get('/hackathon/listevents').then(function(response) {
+	  
+		$scope.events = response.data;
+		
+		
+      }, function(errResponse) {
+		  $scope.error= 'error creating key';
+        
+      
+	  });
+	 }
+	 
+	 $scope.setdefaultuserandevent = function()
+	 {
+	
+	  $scope.chartdata = [];
+		for(var i = 0; i< $scope.escrow.length; i++){
+							  if( $scope.escrow[i].eventaddress != null && $scope.escrow[i].assets.length >0  )
+							  {
+								  $scope.eventaddress = $scope.escrow[i].eventaddress;
+							$scope.assets = $scope.escrow[i].assets;
+						  $scope.buyers = $scope.escrow[i].buyers;
+						  $scope.escrowobject = $scope.escrow[i];	  
+								break;  
+							  }
+							  
+						  }
+						  
+						    
+						 
+								$scope.bodytosend.eventaddress = $scope.escrowobject.eventaddress;
+								$scope.bodytosend.eventname = $scope.escrowobject.escrowdata.title;
+								$scope.bodytosend.minsellersneeded = $scope.escrowobject.policy.minsellersneeded;
+								for(var i =0; i< $scope.buyers.length; i++){
+									$scope.getchartdata($scope.buyers[i]);
+								}
+			
+			
+						  
+						  
+						  
+						  
+	
+	 }
+	 
+	 $scope.listevents();
+
+	 $scope.listsellerowners = function ()
+	 {
+		 var obj = {
+			network:'testnet' 
+		 };
+		 
+		 
+		 $http.get('/hackathon/listsellerowners').then(function(response) {
+	  
+		$scope.sellerowners = response.data;
+		
+		
+      }, function(errResponse) {
+		  $scope.error= 'error creating key';
+        
+      
+	  });
+	 }
+	 $scope.listsellerowners();
+	
+	
+$scope.listbuyerowners = function ()
+	 {
+		 var obj = {
+			network:'testnet' 
+		 };
+		 
+		 
+		 $http.get('/hackathon/listbuyerowners').then(function(response) {
+	  
+		$scope.buyerowners = response.data;
+		
+		
+      }, function(errResponse) {
+		  $scope.error= 'error creating key';
+        
+      
+	  });
+	 }
+	 $scope.listbuyerowners();
+	 
+	 
+	 $scope.getuserassets = function ()
+	 {
+		 var obj = {
+			network:'testnet' 
+		 };
+		 
+		 $http.post('/hackathon/gettestnetassets', obj).then(function(response) {
+		
+		$scope.assets = response.data;
+		$scope.selectedassets = [];
+		for(var i = 0; i< $scope.assets.length; i++){
+		var x = $scope.assets[i];
+		if(x.assetId != null)
+		$scope.selectedassets.push(x);	
+		}
+		
+		
+      }, function(errResponse) {
+		  $scope.error= 'error getting key';
+        
+      
+	  });
+	 }	 
+	 
+	 $scope.getuserassets();
+	 
+	 $scope.$watch(
+                    'assetapp.title',
+                    function handleFooChange( newValue, oldValue ) {
+						if(newValue != 'undefined' && newValue != null && newValue != ' '){
+							var res = newValue.split('-');
+							
+							var count = res[0];
+							if(isNaN(count) == false && count >= 0 && $scope.selectedassets.length > 0) {
+								//alert(angular.toJson($scope.events, 1));
+							  $scope.assetapplication.asset = $scope.selectedassets[count];
+						  
+							}
+						}
+						
+						
+						
+                    }
+                );
+	
+	 
+				
+	$scope.$watch(
+                    'assetapp.sellername',
+                    function handleFooChange( newValue, oldValue ) {
+						if(newValue != 'undefined' && newValue != null && newValue != ' '){
+							var res = newValue.split('-');
+							
+							var count = res[0];
+							if(isNaN(count) == false && count >= 0 && $scope.sellerowners.length > 0){
+							  
+						  $scope.assetapplication.user = $scope.sellerowners[count];
+							}
+						}
+						
+						
+						
+                    }
+                );
+	
+	
+	 $scope.$watch(
+                    'assetapp.event',
+                    function handleFooChange( newValue, oldValue ) {
+						if(newValue != 'undefined' && newValue != null && newValue != ' '){
+							var res = newValue.split('-');
+							
+							var count = res[0];
+							if(isNaN(count) == false && count >= 0 && $scope.events.length > 0) {
+								
+						
+						  $scope.assetapplication.event = $scope.events[count];
+			//			  alert(angular.toJson($scope.assetapplication.event, 1));
+						   $scope.eventaddress =  $scope.assetapplication.event.event.testnet.address;
+						  
+						  for(var i = 0; i< $scope.escrow.length; i++){
+							  if($scope.eventaddress == $scope.escrow[i].eventaddress)
+							  {
+							$scope.assets = $scope.escrow[i].assets;
+						  $scope.buyers = $scope.escrow[i].buyers;
+						  $scope.escrowobject = $scope.escrow[i];	  
+								break;  
+							  }
+							  
+						  }
+						  
+						    
+						 
+								$scope.bodytosend.eventaddress = $scope.escrowobject.eventaddress;
+								$scope.bodytosend.eventname = $scope.escrowobject.escrowdata.title;
+								$scope.bodytosend.minsellersneeded = $scope.escrowobject.policy.minsellersneeded;
+								for(var i =0; i< $scope.buyers.length; i++){
+									$scope.getchartdata($scope.buyers[i]);
+								}
+			
+			
+						  
+						  
+						  
+							}
+						}
+						
+						
+						
+                    }
+                );
+	
+	 $scope.sellerpriceset = function ()
+	 {
+		 
+		 
+		 $scope.sellermessage ='';
+		$scope.error= '';
+	
+	    if($scope.assetapplication == 'undefined' || $scope.assetapplication == null 
+		|| $scope.assetapplication.user == 'undefined' || $scope.assetapplication.user == null
+		|| $scope.assetapplication.event == 'undefined' || $scope.assetapplication.event == null
+		|| $scope.assetapplication.asset == 'undefined' || $scope.assetapplication.asset == null
+		|| $scope.assetapplication.price == "" || $scope.assetapplication.price == null  )
+		
+		{
+			$scope.error= 'Enter data in fields correctly';
+			 alert(angular.toJson($scope.assetapplication, true));
+			return;
+		}
+		 
+		$scope.error= '';
+	
+	    
+		
+		 
+		 $http.post('/hackathon/sellerpriceset', $scope.assetapplication).then(function(response) {
+	  
+		if(response.data.error){
+			$scope.buyermessage = response.data.error;
+			
+		}
+			$scope.getuserassets();
+		$scope.redrawchart();
+	
+		
+		
+		
+      }, function(errResponse) {
+		  $scope.error= 'error';
+        
+      
+	  });
+	 }
+	
+	
+	
+	$scope.buyerpriceset = function ()
+	 {
+		 
+		 $scope.buyermessage ='';
+		$scope.error= '';
+	
+	    if($scope.assetapplication == 'undefined' || $scope.assetapplication == null 
+		|| $scope.assetapplication.user == 'undefined' || $scope.assetapplication.user == null
+		|| $scope.assetapplication.event == 'undefined' || $scope.assetapplication.event == null
+		|| $scope.assetapplication.price == "" || $scope.assetapplication.price == null  )
+		
+		{
+			$scope.error= 'Enter data in fields correctly';
+			// alert(angular.toJson($scope.assetapplication, true));
+			return;
+		}
+		
+		 
+		 $http.post('/hackathon/buyerpriceset', $scope.assetapplication).then(function(response) {
+	  
+		if(response.data.error){
+			$scope.buyermessage = response.data.error;
+			
+		}
+		
+		$scope.getuserassets();
+		$scope.redrawchart();
+		/*
+		$scope.assetapplication.price = '';
+		$scope.assetapplication.user = {};
+		$scope.assetapplication.event = {};
+		
+		$scope.assetapp.title = '';
+		$scope.assetapp.event = '';
+		$scope.assetapp.name = '';
+		$scope.assetapp.buyername = ''; */
+		
+      }, function(errResponse) {
+		  $scope.error= 'error';
+        
+      
+	  });
+	 }
+	$scope.redrawchart = function()
+	{
+		$scope.chartdata = [];
+		for(var i = 0; i< $scope.escrow.length; i++){
+							  if($scope.eventaddress == $scope.escrow[i].eventaddress)
+							  {
+							$scope.assets = $scope.escrow[i].assets;
+						  $scope.buyers = $scope.escrow[i].buyers;
+						  $scope.escrowobject = $scope.escrow[i];	  
+								break;  
+							  }
+							  
+						  }
+						  
+						    
+						 
+								$scope.bodytosend.eventaddress = $scope.escrowobject.eventaddress;
+								$scope.bodytosend.eventname = $scope.escrowobject.escrowdata.title;
+								$scope.bodytosend.minsellersneeded = $scope.escrowobject.policy.minsellersneeded;
+								for(var i =0; i< $scope.buyers.length; i++){
+									$scope.getchartdata($scope.buyers[i]);
+								}
+			
+			
+						  
+						  
+						  
+						  
+	}
+	$scope.getchartdata = function (buyerobj)
+	{
+		var bodytosend = {
+		eventaddress: '',
+			buyeraddress:'',
+			
+			eventname: '',
+			buyername: '',
+			minsellersneeded: '',
+			buyerprice:''
+			
+	   };
+				bodytosend.eventaddress = $scope.bodytosend.eventaddress ;
+				bodytosend.eventname = $scope.bodytosend.eventname;
+				bodytosend.minsellersneeded = $scope.bodytosend.minsellersneeded ;
+								
+		bodytosend.buyername = buyerobj.username;
+		bodytosend.buyerprice = buyerobj.price;
+		bodytosend.buyeraddress = buyerobj.useraddress;
+		
+		
+		
+		 $http.post('/hackathon/getcharts', bodytosend).then(function(response) {
+		var chart = response.data;
+		
+		var category ={
+			categorylabels:[],
+			categorydata1:[],
+			buyerprice: bodytosend.buyerprice,
+			buyername: bodytosend.buyername
+		};
+  
+
+		
+			
+			category.categorydata1.push(chart.policydemand);
+			category.categorydata1.push(chart.matchingsellers);
+			category.categorydata1.push(chart.totalsellers-chart.matchingsellers);
+			
+			category.categorylabels.push('% Policy limit');
+			category.categorylabels.push('% Sellers agreeing at price');
+			category.categorylabels.push('% Sellers refusing at price' + $scope.bodytosend.buyerprice);
+			
+			$scope.chartdata.push(category);
+				
+		
+      }, function(errResponse) {
+		  $scope.error= 'error getting key';
+        
+      
+	  });
+	  
+	
+	}
+
+
+
+	   $scope.getuserassets = function ()
+	 {
+		 var obj = {
+			network:'testnet' 
+		 };
+		 
+		 $http.get('/hackathon/getescrowlist', obj).then(function(response) {
+		
+		$scope.escrow = response.data;
+	//	$scope.assets = $scope.escrow[0].assets;
+	//	$scope.buyers = $scope.escrow[0].buyers;
+	
+		$scope.setdefaultuserandevent ();	
+		
+      }, function(errResponse) {
+		  $scope.error= 'error getting key';
+        
+      
+	  });
+	 }	 
+	 
+	 $scope.getuserassets();
+	 
+	 
+	 
+  
+  
+  
+  
+	
+       
+   })
+ 
+	
+	
+	
+   
+ .controller('BuyerpanelCtrl', function($scope, $http) {
+	 
+	$scope.sellerowners = [];
+	$scope.buyerowners = [];
+	$scope.assets = [];
+	$scope.selectedassets = [];
+	
+	$scope.events = [];	 
+		 
+		 
+		 $scope.assetapplication = {
+		  user: {},
+			event:{},
+			asset:{},
+			price:''
+		 };
+		 
+	 $scope.assetapp = {
+		title:'',
+		event:'',
+		buyername:'',
+		sellername:''
+	 };
+	 
+	 $scope.eventaddress ='';
+	 
+  $scope.escrowobject = {};
+	   $scope.bodytosend = {
+		eventaddress: '',
+			buyeraddress:'',
+			
+			eventname: '',
+			buyername: '',
+			minsellersneeded: '',
+			buyerprice:''
+			
+	   };
+	
+      $scope.chartdata = [];	
+
+	 
+	 $scope.listevents = function ()
+	 {
+		 var obj = {
+			network:'testnet' 
+		 };
+		 
+		 
+		 $http.get('/hackathon/listevents').then(function(response) {
+	  
+		$scope.events = response.data;
+		
+		
+      }, function(errResponse) {
+		  $scope.error= 'error creating key';
+        
+      
+	  });
+	 }
+	 
+	 $scope.setdefaultuserandevent = function()
+	 {
+	
+	  $scope.chartdata = [];
+		for(var i = 0; i< $scope.escrow.length; i++){
+							  if( $scope.escrow[i].eventaddress != null && $scope.escrow[i].assets.length >0  )
+							  {
+								  $scope.eventaddress = $scope.escrow[i].eventaddress;
+							$scope.assets = $scope.escrow[i].assets;
+						  $scope.buyers = $scope.escrow[i].buyers;
+						  $scope.escrowobject = $scope.escrow[i];	  
+								break;  
+							  }
+							  
+						  }
+						  
+						    
+						 
+								$scope.bodytosend.eventaddress = $scope.escrowobject.eventaddress;
+								$scope.bodytosend.eventname = $scope.escrowobject.escrowdata.title;
+								$scope.bodytosend.minsellersneeded = $scope.escrowobject.policy.minsellersneeded;
+								for(var i =0; i< $scope.buyers.length; i++){
+									$scope.getchartdata($scope.buyers[i]);
+								}
+			
+			
+						  
+						  
+						  
+						  
+	
+	 }
+	 
+	 $scope.listevents();
+
+$scope.listbuyerowners = function ()
+	 {
+		 var obj = {
+			network:'testnet' 
+		 };
+		 
+		 
+		 $http.get('/hackathon/listbuyerowners').then(function(response) {
+	  
+		$scope.buyerowners = response.data;
+		
+		
+      }, function(errResponse) {
+		  $scope.error= 'error creating key';
+        
+      
+	  });
+	 }
+	 $scope.listbuyerowners();
+	 
+	 $scope.$watch(
+                    'assetapp.event',
+                    function handleFooChange( newValue, oldValue ) {
+						if(newValue != 'undefined' && newValue != null && newValue != ' '){
+							var res = newValue.split('-');
+							
+							var count = res[0];
+							if(isNaN(count) == false && count >= 0 && $scope.events.length > 0) {
+								
+						
+						  $scope.assetapplication.event = $scope.events[count];
+			//			  alert(angular.toJson($scope.assetapplication.event, 1));
+						   $scope.eventaddress =  $scope.assetapplication.event.event.testnet.address;
+						  
+						  for(var i = 0; i< $scope.escrow.length; i++){
+							  if($scope.eventaddress == $scope.escrow[i].eventaddress)
+							  {
+							$scope.assets = $scope.escrow[i].assets;
+						  $scope.buyers = $scope.escrow[i].buyers;
+						  $scope.escrowobject = $scope.escrow[i];	  
+								break;  
+							  }
+							  
+						  }
+						  
+						    
+						 
+								$scope.bodytosend.eventaddress = $scope.escrowobject.eventaddress;
+								$scope.bodytosend.eventname = $scope.escrowobject.escrowdata.title;
+								$scope.bodytosend.minsellersneeded = $scope.escrowobject.policy.minsellersneeded;
+								for(var i =0; i< $scope.buyers.length; i++){
+									$scope.getchartdata($scope.buyers[i]);
+								}
+			
+			
+						  
+						  
+						  
+							}
+						}
+						
+						
+						
+                    }
+                );
+	
+	$scope.$watch(
+                    'assetapp.buyername',
+                    function handleFooChange( newValue, oldValue ) {
+						if(newValue != 'undefined' && newValue != null && newValue != ' '){
+							var res = newValue.split('-');
+							
+							var count = res[0];
+							if(isNaN(count) == false && count >= 0 && $scope.buyerowners.length > 0){
+							  
+						  $scope.assetapplication.user = $scope.buyerowners[count];
+							}
+						}
+						
+						
+						
+                    }
+                );
+	
+	$scope.buyerpriceset = function ()
+	 {
+		 
+		 $scope.buyermessage ='';
+		$scope.error= '';
+	
+	    if($scope.assetapplication == 'undefined' || $scope.assetapplication == null 
+		|| $scope.assetapplication.user == 'undefined' || $scope.assetapplication.user == null
+		|| $scope.assetapplication.event == 'undefined' || $scope.assetapplication.event == null
+		|| $scope.assetapplication.price == "" || $scope.assetapplication.price == null  )
+		
+		{
+			$scope.error= 'Enter data in fields correctly';
+			// alert(angular.toJson($scope.assetapplication, true));
+			return;
+		}
+		
+		 
+		 $http.post('/hackathon/buyerpriceset', $scope.assetapplication).then(function(response) {
+	  
+		if(response.data.error){
+			$scope.buyermessage = response.data.error;
+			
+		}
+		
+		$scope.getuserassets();
+		$scope.redrawchart();
+		/*
+		$scope.assetapplication.price = '';
+		$scope.assetapplication.user = {};
+		$scope.assetapplication.event = {};
+		
+		$scope.assetapp.title = '';
+		$scope.assetapp.event = '';
+		$scope.assetapp.name = '';
+		$scope.assetapp.buyername = ''; */
+		
+      }, function(errResponse) {
+		  $scope.error= 'error';
+        
+      
+	  });
+	 }
+	$scope.redrawchart = function()
+	{
+		$scope.chartdata = [];
+		for(var i = 0; i< $scope.escrow.length; i++){
+							  if($scope.eventaddress == $scope.escrow[i].eventaddress)
+							  {
+							$scope.assets = $scope.escrow[i].assets;
+						  $scope.buyers = $scope.escrow[i].buyers;
+						  $scope.escrowobject = $scope.escrow[i];	  
+								break;  
+							  }
+							  
+						  }
+						  
+						    
+						 
+								$scope.bodytosend.eventaddress = $scope.escrowobject.eventaddress;
+								$scope.bodytosend.eventname = $scope.escrowobject.escrowdata.title;
+								$scope.bodytosend.minsellersneeded = $scope.escrowobject.policy.minsellersneeded;
+								for(var i =0; i< $scope.buyers.length; i++){
+									$scope.getchartdata($scope.buyers[i]);
+								}
+			
+			
+						  
+						  
+						  
+						  
+	}
+	$scope.getchartdata = function (buyerobj)
+	{
+		var bodytosend = {
+		eventaddress: '',
+			buyeraddress:'',
+			
+			eventname: '',
+			buyername: '',
+			minsellersneeded: '',
+			buyerprice:''
+			
+	   };
+				bodytosend.eventaddress = $scope.bodytosend.eventaddress ;
+				bodytosend.eventname = $scope.bodytosend.eventname;
+				bodytosend.minsellersneeded = $scope.bodytosend.minsellersneeded ;
+								
+		bodytosend.buyername = buyerobj.username;
+		bodytosend.buyerprice = buyerobj.price;
+		bodytosend.buyeraddress = buyerobj.useraddress;
+		
+		
+		
+		 $http.post('/hackathon/getcharts', bodytosend).then(function(response) {
+		var chart = response.data;
+		
+		var category ={
+			categorylabels:[],
+			categorydata1:[],
+			buyerprice: bodytosend.buyerprice,
+			buyername: bodytosend.buyername
+		};
+  
+
+		
+			
+			category.categorydata1.push(chart.policydemand);
+			category.categorydata1.push(chart.matchingsellers);
+			category.categorydata1.push(chart.totalsellers-chart.matchingsellers);
+			
+			category.categorylabels.push('% Policy limit');
+			category.categorylabels.push('% Sellers agreeing at price');
+			category.categorylabels.push('% Sellers refusing at price' + $scope.bodytosend.buyerprice);
+			
+			$scope.chartdata.push(category);
+				
+		
+      }, function(errResponse) {
+		  $scope.error= 'error getting key';
+        
+      
+	  });
+	  
+	
+	}
+
+
+
+	   $scope.getuserassets = function ()
+	 {
+		 var obj = {
+			network:'testnet' 
+		 };
+		 
+		 $http.get('/hackathon/getescrowlist', obj).then(function(response) {
+		
+		$scope.escrow = response.data;
+	//	$scope.assets = $scope.escrow[0].assets;
+	//	$scope.buyers = $scope.escrow[0].buyers;
+	
+		$scope.setdefaultuserandevent ();	
+		
+      }, function(errResponse) {
+		  $scope.error= 'error getting key';
+        
+      
+	  });
+	 }	 
+	 
+	 $scope.getuserassets();
+	 
+	 
+	 
+  
+  
+  
+  
+	
+       
+   })
+ 
+	
+	
+	 
+	 
+	 
+
+
+	 
    
  .controller('AssetPriceCtrl', function($scope, $http) {
 	 
@@ -1016,6 +1825,10 @@ $scope.createasset = function ()
        
    })
  
+ 
+ 
+ 
+ 
 .controller('TableCtrl', function($scope, $http) {
 	$scope.table ={
 		name:'',
@@ -1148,7 +1961,7 @@ $scope.createasset = function ()
 			
 	   };
 	
-$scope.chartdata = [];	
+      $scope.chartdata = [];	
 	   $scope.getuserassets = function ()
 	 {
 		 var obj = {
@@ -1233,6 +2046,8 @@ $scope.chartdata = [];
 		var category ={
 			categorylabels:[],
 			categorydata1:[],
+			buyerprice: bodytosend.buyerprice,
+			buyername: bodytosend.buyername
 		};
   
 
@@ -1242,9 +2057,9 @@ $scope.chartdata = [];
 			category.categorydata1.push(chart.matchingsellers);
 			category.categorydata1.push(chart.totalsellers-chart.matchingsellers);
 			
-			category.categorylabels.push('Policy');
-			category.categorylabels.push('Sellers agreeing');
-			category.categorylabels.push('Gap at price' + $scope.bodytosend.buyerprice);
+			category.categorylabels.push('% Policy limit');
+			category.categorylabels.push('% Sellers agreeing at price');
+			category.categorylabels.push('% Sellers refusing at price' + $scope.bodytosend.buyerprice);
 			
 			$scope.chartdata.push(category);
 				
