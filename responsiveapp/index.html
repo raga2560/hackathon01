@@ -40,9 +40,9 @@
         <div id="userRegistration" class="tab-pane fade in active">
             <!-- <h3>User registration (ready)</h3> -->
             <div class="list-group">
-                <a class="list-group-item" href="">Register </a>
-                <a class="list-group-item" href="/login">Login </a>
-                <a class="list-group-item" href="/logout">Logout </a>
+                <a class="list-group-item" ui-sref="loginpanel">Register </a>
+                <a class="list-group-item" ui-sref="loginpanel">Login </a>
+                <a class="list-group-item" ui-sref="logoutpanel">Logout </a>
             </div>
         </div>
         <div id="sellerRegistration" class="tab-pane fade">
@@ -499,8 +499,39 @@
                 }
 			  }
 			})
+			
+			.state('loginpanel', {
+              url: "/loginpanel",
+			
+			views: {
+                
+				"view1": {
+                    
+					templateUrl: "loginpanel.html",
+					 controller: 'LoginRegistrationCtrl'
+                },
+				"view2": {
+                    
+					templateUrl: "registerpanel.html",
+					 controller: 'LoginRegistrationCtrl'
+                }
+			  }
+			})
 		
-        	
+        	.state('logoutpanel', {
+              url: "/logoutpanel",
+			
+			views: {
+                
+				"view1": {
+                    
+					templateUrl: "logoutpanel.html",
+					 controller: 'LoginRegistrationCtrl'
+                }
+			  }
+			})		
+        
+		
 			
 		  
         
