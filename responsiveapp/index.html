@@ -5,28 +5,9 @@
     <title>Group trading solution using blockchain</title>
     <!-- Bootstrap CSS -->
     <link href="bootstrap.min.css" rel="stylesheet">
-    <link href="app.css" rel="stylesheet">
 </head>
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
-<link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
 
 <body class="container">
-
-
-    <nav class="navbar navbar-default">
-        <div class="container-fluid">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
-                <a class="navbar-brand" href="#">Group trading solution using blockchain</a>
-            </div>
-        </div>
-        <!-- /.container-fluid -->
-    </nav>
-
-    <div class="jumbotron">
-        <div class="container">
-        </div>
   
   <div class="navbar">
     <div class="navbar-inner">
@@ -106,101 +87,41 @@
 		</div>
 	</div>
 	
+		
+		
+		
+		
+		
+		
+		
+      
+	  
     </div>
+  </div>
 
-    <ul class="nav nav-tabs">
-        <li role="presentation" class="active"><a data-toggle="tab" href="#userRegistration">User registration <span class="status">(ready)</span>  </a>
-        </li>
-        <li role="presentation"><a data-toggle="tab" href="#management">Management <span class="status">(in progress)</span></a>
-        </li>
-        <li role="presentation"><a data-toggle="tab" href="#sellerRegistration">Seller registration <span class="status">(in progress)</span></a>
-        </li>
-        <li role="presentation"><a data-toggle="tab" href="#govt">Govt <span class="status">(in progress)</span></a>
-        </li>
-        <li role="presentation"><a data-toggle="tab" href="#bidderRegistration">Bidder registration <span class="status">(in progress)</span></a>
-        </li>
-        <li role="presentation"><a data-toggle="tab" href="#actionTrading">Perform auction/trading <span class="status">(in progress)</span></a>
-        </li>
-    </ul>
-
-    <div class="tab-content">
-        <div id="userRegistration" class="tab-pane fade in active">
-            <!-- <h3>User registration (ready)</h3> -->
-            <div class="list-group">
-                <a class="list-group-item" href="">Register </a>
-                <a class="list-group-item" href="/login">Login </a>
-                <a class="list-group-item" href="/logout">Logout </a>
-                <a class="list-group-item" ui-sref="loginroute">Login status </a>
-            </div>
-        </div>
-        <div id="sellerRegistration" class="tab-pane fade">
-            <!-- <h3>Seller registration (in progress)</h3> -->
-            <div class="list-group">
-                <a class="list-group-item" ui-sref="sellerregistration">Register as seller </a>
-                <a class="list-group-item" ui-sref="sellerapply">Seller apply for trading event</a>
-                <a class="list-group-item" ui-sref="assetroute">Asset debug (ready)</a>
-                <a class="list-group-item" ui-sref="loadmoney"> Load money to pay for asset registration, registration to event</a>
-                <a class="list-group-item" ui-sref="assetregistration">Asset registration</a>
-                <a class="list-group-item" ui-sref="assetapply">Asset apply for event</a>
-                <a class="list-group-item" ui-sref="sellerassetprice">Seller asset price change </a>
-            </div>
-        </div>
-        <div id="bidderRegistration" class="tab-pane fade">
-            <!-- <h3>Bidder registration (in progress)</h3> -->
-            <div class="list-group">
-                <a class="list-group-item" ui-sref="buyerregistration">Register as buyer </a>
-                <a class="list-group-item" ui-sref="buyerapply">Buyer apply for trading event</a>
-                <a class="list-group-item" ui-sref="buyerassetprice">Buyer Price change </a>
-            </div>
-        </div>
-        <div id="management" class="tab-pane fade">
-            <!-- <h3>Management (in progress)</h3> -->
-            <div class="list-group">
-                <a class="list-group-item" ui-sref="eventregistration">Create trading/group/event </a>
-                <a class="list-group-item" ui-sref="assetroute">Create escrow address </a>
-                <a class="list-group-item" ui-sref="assetregistration">List assets, owners in escrow </a>
-                <a class="list-group-item" ui-sref="assetroute">List bidders address'es  </a>
-                <a class="list-group-item" ui-sref="assetroute">List govt policy terms  </a>
-                <a class="list-group-item" ui-sref="assetroute">List confirmed transaction  </a>
-                <a class="list-group-item" ui-sref="assetroute">List returned assets  </a>
-            </div>
-        </div>
-        <div id="govt" class="tab-pane fade">
-            <!-- <h3>Govt (in progress)</h3> -->
-            <div class="list-group">
-                <a class="list-group-item" ui-sref="setgovtpolicy">Enter policy  </a>
-            </div>
-        </div>
-        <div id="actionTrading" class="tab-pane fade">
-            <!-- <h3>Perform auction/trading (in progress)</h3> -->
-            <div class="list-group">
-                <a class="list-group-item" ui-sref="assetroute">Start trading  </a>
-                <a class="list-group-item" ui-sref="assetroute">Complete trading  </a>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-6">
-                <div class="well" ui-view="view1"></div>
-            </div>
-            <div class="col-md-6">
-                <div class="well" ui-view="view2"></div>
-            </div>
-        </div>
+  <div class="row">
+    <div class="col-md-6">
+      
+	   <div class="well" ui-view="view1">
+	 
+	  
+	  </div>  
+	  
+	  
+	  
+       
     </div>
-
-
+	<div class="col-md-6">
+      
+	   <div class="well" ui-view="view2">
+	 
+	  
+	  </div>  
+	  
+	  
+	  
+       
     </div>
-
-
-
-
-    <!-- Angular -->
-    <script src="angular.min.js"></script>
-    <!-- UI-Router -->
-    <script src="angular-ui-router.js"></script>
-
-
   </div>         
   
   <!-- Angular -->
@@ -210,10 +131,12 @@
   <script src="js/d3.v3.min.js" charset="utf-8"></script>
   <script src="js/Chart.js"></script>
   <script src="js/angular-chart.js"></script>
+  
     <script src="controllers1.js"></script>
-    <script src="controllers2.js"></script>
+	<script src="controllers2.js"></script>
     <script src="services.js"></script>
-
+	
+  
   <!-- App Script -->
   <script>
     angular.module('myapp', ['ui.router', 'myapp.controllers1', 'myapp.controllers2', 'myapp.services'])
