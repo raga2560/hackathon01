@@ -13,6 +13,7 @@
 
 <body class="container">
 
+
     <nav class="navbar navbar-default">
         <div class="container-fluid">
             <!-- Brand and toggle get grouped for better mobile display -->
@@ -26,6 +27,85 @@
     <div class="jumbotron">
         <div class="container">
         </div>
+  
+  <div class="navbar">
+    <div class="navbar-inner">
+      <a class="brand" href="#">Group trading solution using blockchain</a> 
+	  </br>
+	  <div class="row">
+        <div class="col-md-6">
+		
+  
+	User registration (ready)
+      <ul class="well">
+	  <li><a href="/signup">Register </a> </li>
+	  <li><a href="/login">Login </a> </li>
+	  <li><a href="/logout">Logout </a> </li>
+	   
+	   
+	   
+	  
+	  </ul>
+      Seller registration (in progress)
+      <ul class="well">
+	  
+	  <li><a ui-sref="sellerregistration">Register as seller </a></li>
+	  <li><a ui-sref="sellerapply">Seller apply for trading event</a></li>
+	  
+	   <li><a ui-sref="loadmoney"> Load money to pay for asset registration, registration to event</a></li>
+	   <li><a ui-sref="assetregistration">Asset registration</a></li>
+	   <li><a ui-sref="assetapply">Asset apply for event 1 </a></li>
+	   <li><a ui-sref="sellerassetprice">Seller asset price change </a></li>
+        
+		
+		</ul>
+		
+		Bidder registration (in progress)
+      <ul class="well">
+	   <li><a ui-sref="buyerregistration">Register as buyer </a></li>
+	   <li><a ui-sref="buyerapply">Buyer apply for trading event</a></li>
+	   <li><a ui-sref="buyerassetprice">Buyer Price change </a></li>
+	   <li><a ui-sref="charts">Get chart </a></li>
+	   
+	  
+	  </ul>
+		</div>
+	
+		<div class="col-md-6">
+		Management (in progress)
+				  <ul class="well">
+				   <li><a ui-sref="eventregistration">Create trading/group/event </a></li>
+				   <li><a ui-sref="blockassetsinescrow">Blockchain assets in escrow </a></li>
+				   <li><a ui-sref="blocksellerassets">Blockchain assets with sellers </a></li>
+				   <li><a ui-sref="tableoperation">Table operations </a></li>
+				   <li><a ui-sref="mapassetsandbuyers">Map assets, buyers </a></li>
+				   <li><a ui-sref="sendtobuyers">Send assets to buyers 2 </a></li>
+				   <li><a ui-sref="returnassetstoowners">Return assets to owners 3 </a></li>
+				   
+				   <li><a ui-sref="assetroute">List final assets with owners, buyers, escrow 4 </a></li>
+				   
+				   
+				</ul>
+				Govt 
+		<ul class="well">		
+		<li><a ui-sref="setgovtpolicy">Enter policy  </a></li>
+	  
+		</ul>
+		   Perform auction/trading (in progress)
+		<ul class="well">		
+		<li><a ui-sref="assetroute">Start trading  </a></li>
+		<li><a ui-sref="assetroute">Complete trading  </a></li>
+	  
+		</ul>
+		Debug (in progress)
+		<ul class="well">		
+		<li><a ui-sref="loginroute">Login status </a></li>
+		 <li><a ui-sref="assetroute">Asset debug (ready)</a></li>
+	  
+		</ul>
+		</div>
+	</div>
+	
     </div>
 
     <ul class="nav nav-tabs">
@@ -114,11 +194,22 @@
 
 
 
+
     <!-- Angular -->
     <script src="angular.min.js"></script>
     <!-- UI-Router -->
     <script src="angular-ui-router.js"></script>
 
+
+  </div>         
+  
+  <!-- Angular -->
+  <script src="angular.min.js"></script>
+  <!-- UI-Router -->
+  <script src="angular-ui-router.js"></script>
+  <script src="js/d3.v3.min.js" charset="utf-8"></script>
+  <script src="js/Chart.js"></script>
+  <script src="js/angular-chart.js"></script>
     <script src="controllers1.js"></script>
     <script src="controllers2.js"></script>
     <script src="services.js"></script>
