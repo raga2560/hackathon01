@@ -50,15 +50,14 @@
                 <a class="list-group-item" href="">Register </a>
                 <a class="list-group-item" href="/login">Login </a>
                 <a class="list-group-item" href="/logout">Logout </a>
-                <a class="list-group-item" ui-sref="loginroute">Login status </a>
             </div>
         </div>
         <div id="sellerRegistration" class="tab-pane fade">
             <!-- <h3>Seller registration (in progress)</h3> -->
+
             <div class="list-group">
                 <a class="list-group-item" ui-sref="sellerregistration">Register as seller </a>
                 <a class="list-group-item" ui-sref="sellerapply">Seller apply for trading event</a>
-                <a class="list-group-item" ui-sref="assetroute">Asset debug (ready)</a>
                 <a class="list-group-item" ui-sref="loadmoney"> Load money to pay for asset registration, registration to event</a>
                 <a class="list-group-item" ui-sref="assetregistration">Asset registration</a>
                 <a class="list-group-item" ui-sref="assetapply">Asset apply for event</a>
@@ -71,18 +70,22 @@
                 <a class="list-group-item" ui-sref="buyerregistration">Register as buyer </a>
                 <a class="list-group-item" ui-sref="buyerapply">Buyer apply for trading event</a>
                 <a class="list-group-item" ui-sref="buyerassetprice">Buyer Price change </a>
+                <a class="list-group-item" ui-sref="charts">Get chart </a>
             </div>
         </div>
         <div id="management" class="tab-pane fade">
-            <!-- <h3>Management (in progress)</h3> -->
+            <!-- <h3>Management (in progress)</h3> -->         
+				   
+
             <div class="list-group">
                 <a class="list-group-item" ui-sref="eventregistration">Create trading/group/event </a>
-                <a class="list-group-item" ui-sref="assetroute">Create escrow address </a>
-                <a class="list-group-item" ui-sref="assetregistration">List assets, owners in escrow </a>
-                <a class="list-group-item" ui-sref="assetroute">List bidders address'es  </a>
-                <a class="list-group-item" ui-sref="assetroute">List govt policy terms  </a>
-                <a class="list-group-item" ui-sref="assetroute">List confirmed transaction  </a>
-                <a class="list-group-item" ui-sref="assetroute">List returned assets  </a>
+                <a class="list-group-item" ui-sref="blockassetsinescrow">Blockchain assets in escrow </a>
+                <a class="list-group-item" ui-sref="blocksellerassets">Blockchain assets with sellers </a>
+                <a class="list-group-item" ui-sref="tableoperation">Table operations  </a>
+                <a class="list-group-item" ui-sref="mapassetsandbuyers">Map assets, buyers </a>
+                <a class="list-group-item" ui-sref="sendtobuyers">Send assets to buyers 2  </a>
+                <a class="list-group-item" ui-sref="returnassetstoowners">Return assets to owners 3  </a>
+                <a class="list-group-item" ui-sref="assetroute">List final assets with owners, buyers, escrow 4 </a>
             </div>
         </div>
         <div id="govt" class="tab-pane fade">
