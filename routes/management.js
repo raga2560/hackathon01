@@ -10,6 +10,8 @@ var UsersDAO = require('../users').UsersDAO
   , AssetstoreDAO = require('../assets').AssetstoreDAO
   , KeystoreDAO = require('../keystore').KeystoreDAO
   , EventstoreDAO = require('../events').EventstoreDAO
+  , EscrowstoreDAO = require('../escrow').EscrowstoreDAO
+  
   , UserrecordDAO = require('../userrecord').UserrecordDAO
   
   , ConfappDAO = require('../confapp').ConfappDAO;
@@ -22,6 +24,8 @@ Create_assets-> create_assets_colored -> store_assets_ofuser
 
 */
 /* The SessionHandler must be constructed with a connected db */
+
+
 
 function postToApi(api_endpoint, json_data, callback) {
     console.log(api_endpoint+': ', JSON.stringify(json_data));
@@ -77,8 +81,10 @@ function Management (db) {
 	var keystore = new KeystoreDAO(db);
 	var eventstore = new EventstoreDAO(db);
 	var assetstore = new AssetstoreDAO(db);
+	var escrowstore = new EscrowstoreDAO(db);
 	var userrecord = new UserrecordDAO(db);
-	
+
+
 	var uploadedimage = "";
 
 	this.getloginuser = function(req, res) {
@@ -105,6 +111,7 @@ function Management (db) {
 		
     
 	}
+	
 
 	this.getassetowner = function(req, res) {
         "use strict";
@@ -258,7 +265,48 @@ after issuing asset below
         });
 	}
 	
-	this.getowners = function(req, res) {
+	this.getcharts = function(req, res) {
+        "use strict";
+		
+
+		var data = req.body;
+		
+		escrowstore.getmatchreport(data,  function(err, obj) {
+				if (err) return res.json({error:err});
+				return res.json(obj);
+			});
+			
+		
+	}
+	
+	
+	this.getbuyerowners = function(req, res) {
+        "use strict";
+		
+
+		var session_id = req.cookies.session;
+        sessions.getUsername(session_id, function(err, username1) {
+            "use strict";
+
+            if (!err && username1) {
+              var  username = username1;
+        
+		var type = 'buyer';
+		userrecord.listuserrecords(username, type, function(err, obj) {
+				if (err) return res.json({error:err});
+				return res.json(obj);
+			});
+			
+			}
+			
+		else {
+				 return res.json({error:err});
+			}
+            
+        });
+	}
+	
+	this.getsellerowners = function(req, res) {
         "use strict";
 		
 
@@ -284,6 +332,38 @@ after issuing asset below
         });
 	}
     
+	
+	this.getescrowlist = function(req, res) {
+        "use strict";
+		
+
+		var session_id = req.cookies.session;
+        sessions.getUsername(session_id, function(err, username1) {
+            "use strict";
+
+            if (!err && username1) {
+              var  username = username1;
+        
+		escrowstore.listescrow(username,  function(err, obj) {
+			
+				if (err) return res.json({error:err});
+				return res.json(obj);
+			});
+			
+			}
+			
+		else {
+			
+				 return res.json({error:err});
+			}
+            
+        });
+
+				
+				
+
+	}	
+	
 	this.gettestnetassets = function(req, res) {
         "use strict";
 		
@@ -468,6 +548,311 @@ after issuing asset below
 			
     }
 	
+	this.applyseller = function(req, res) {
+        "use strict";
+		
+		var obj = req.body;
+
+		//console.log(req.body.event);
+		var eventaddress = req.body.event.event.testnet.address;
+		
+		
+        eventstore.insertseller(eventaddress,obj, function(err, data) {
+            "use strict";
+
+           if (err) return res.json({error:err});
+		   
+		
+			
+			return res.json(data);
+			
+			
+		
+        });
+	}
+	
+	this.applybuyer = function(req, res) {
+        "use strict";
+		
+		var obj = req.body;
+
+		// console.log(req.body.event);
+		var eventaddress = req.body.event.event.testnet.address;
+		var useraddress = req.body.user.record.testnet.address;
+		
+        eventstore.insertbuyer(eventaddress,obj, function(err, data) {
+            "use strict";
+
+           if (err) return res.json({error:err});
+
+			
+		// console.log(req.body.event);
+		
+			return res.json(data);
+		
+		
+			
+			
+		
+        });
+	}
+	
+	this.tableoperate = function(req, res) {
+        "use strict";
+		
+		var name = req.body.name;
+		var operation = req.body.operation;
+
+		if(name == 'events'){
+			
+		eventstore.listtable(name,operation, function(err, data) {
+            "use strict";
+
+           if (err) return res.json(err);
+
+			return res.json(data);
+        });
+		
+		}
+		else {
+		var err ="not implemented";
+		return res.json(err);
+        	
+		}
+		
+	}
+	
+	
+	
+	this.sellerpriceset = function(req, res) {
+        "use strict";
+		
+		var obj = req.body;
+
+		// console.log(req.body.event);
+		var eventaddress = req.body.event.event.testnet.address;
+		var useraddress = req.body.user.record.testnet.address;
+		var price = req.body.price;
+		var assetId = req.body.asset.assetId;
+		
+        eventstore.findseller(eventaddress,obj, function(err, data) {
+            "use strict";
+
+           if (err) return res.json({error:err});
+
+			
+		// console.log(req.body.event);
+		
+		
+		
+		
+		var obj1 = {
+			
+			eventaddress: eventaddress,
+			useraddress: useraddress,
+			assetId: assetId,
+			price:price,
+			status:'active'
+		};
+		
+        escrowstore.setsellerprice(obj1, function(err, data) {
+            "use strict";
+
+           if (err) return res.json({error:err});
+		   
+		
+			
+			return res.json(data);
+			
+			
+		
+        });
+		
+			
+			
+			
+			
+		
+        });
+	}
+	this.setpolicyrate = function(req, res) {
+        "use strict";
+		
+		var obj = req.body;
+		
+		escrowstore.setpolicyrate(obj, function(err, data) {
+					"use strict";
+
+				if (err) return res.json({error:err});
+		   				return res.json(data);
+			
+				});
+				
+	}
+	
+	
+	this.buyerpriceset = function(req, res) {
+        "use strict";
+		
+		var obj = req.body;
+
+		// console.log(req.body.event);
+		var eventaddress = req.body.event.event.testnet.address;
+		var useraddress = req.body.user.record.testnet.address;
+		var username = req.body.user.record.name;
+		
+		var price = req.body.price;
+		
+        eventstore.findbuyer(eventaddress,obj, function(err, data) {
+            "use strict";
+
+           if (err) return res.json({error:err});
+
+			
+		// console.log(req.body.event);
+		
+		
+		
+		
+		var obj1 = {
+			
+			eventaddress: eventaddress,
+			useraddress: useraddress,
+			username : username,
+			price:price,
+			status:'active'
+		};
+		
+        escrowstore.setbuyerprice(obj1, function(err, data) {
+            "use strict";
+
+           if (err) return res.json({error:err});
+		   
+		
+			
+			return res.json(data);
+			
+			
+		
+        });
+		
+			
+			
+			
+			
+		
+        });
+	}
+	
+	this.applyasset = function(req, res) {
+        "use strict";
+		
+		
+
+		// console.log(req.body.event);
+		var network = 'testnet';
+		var eventaddress = req.body.event.event.testnet.address;
+		
+		var useraddress = req.body.user.record.testnet.address;
+		var userrecord = req.body.user.record;
+		var assetId = req.body.asset.assetId;
+		var username = req.body.asset.asset.asset.metadata.issuer;
+		var assetname = req.body.asset.asset.asset.metadata.assetName;
+		
+		var issuance_address = [];
+		
+		var obj = {
+			assetId: assetId,
+			eventaddress: eventaddress,
+			useraddress: useraddress,
+			username: username,
+			assetname: assetname,
+			price:'',
+			status:'active'
+		};
+		
+		issuance_address.push(useraddress);
+		
+		var send_asset = {
+    'from': issuance_address , // [issuance_address],		
+    'fee': 5000,
+    'to': [{
+    	'address': eventaddress,
+    	'amount': 5,
+    	'assetId':  assetId //'LKXjG9uMSFoDj2Z6NrEJ6nkcRGVtjUmC4zrtH'
+    }]
+};
+
+		// transmit asset to escrow
+		
+
+				
+			postToApi('sendasset', send_asset, function(err, body){
+				if (err || body== null) {
+					console.log('error: ',err);
+				}else {
+					console.log('sendasset: ',body);
+					if(body.txHex != null) {
+						
+				var data = {
+					network : network,
+					assetId : body.assetId,
+					txHex : body.txHex,
+					asset: send_asset
+					
+				};
+				var key1 = userrecord.testnet.privatekey ;
+			
+				var key = bitcoin.ECKey.fromWIF(key1);
+
+			var sign = signTx(body.txHex,key);
+
+			console.log('Signed: '+sign);
+			var signedTxHex = sign;
+			
+			var data_params = {
+			'txHex': signedTxHex
+			};
+
+			console.log('signed: '+signedTxHex)
+
+			postToApi('broadcast',data_params,function(err, body){
+				if (err) {return console.log('error: '+err); }
+
+					
+		
+				
+        escrowstore.insertasset(obj, function(err, data) {
+            "use strict";
+
+           if (err) return res.json({error:err});
+		   
+		
+			
+			return res.json(data);
+			
+			
+		
+        });
+					
+			});
+			
+			
+				
+				//sign and send
+				// then write record
+				
+					} else {
+						return res.json(body);
+					}
+			  }
+			});
+			
+			
+		
+		
+	}
+	
 	
 	
 	this.createevent = function(req, res) {
@@ -530,23 +915,41 @@ after issuing asset below
            eventstore.insertevent(username, data, function(err, object) {
 			if(err) return res.json({error:err});
 			else {
+				
+				var obj = {
+					    data: data,
+						eventaddress: data.testnet.address
+						};
+		
+				escrowstore.setescrowstructure(obj, function(err, data) {
+					"use strict";
+
+				if (err) return res.json({error:err});
+		   				return res.json(data);
+			
+				});
 					return res.json(object);
 			}
+			
 			});
+			
 			}
 			else {
 				return res.json({error:err});
 			}
 		});
-
-				
-				
-				
+	
 			
     }
 	
 	
 	
+	this.testfunction = function(req) {
+        "use strict";
+
+		console.log("echo = " + req.body);
+		
+	}
 	
 	this.listevents = function(req, res) {
         "use strict";
@@ -565,6 +968,7 @@ after issuing asset below
            eventstore.listevents(username,function(err, object) {
 			if(err) return res.json({error:err});
 			else {
+			
 				res.json(object);
 			}
 			

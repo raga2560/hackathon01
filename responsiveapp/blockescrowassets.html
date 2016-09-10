@@ -3,7 +3,7 @@
 
 <div class="panel panel-default">
                         <div class="panel-heading">
-                            Set govt policy for events
+                            List of assets in escrow
                         </div>
                         <div class="panel-body">
                             <div class="row">
@@ -11,7 +11,8 @@
 								
 								<div class="form-group">
                                             <label>Event</label> {{selectedevent}} </br>
-											<label>Event address</label> {{policy.eventaddress}} </br>
+											<label>Event address</label> {{eventholder.eventaddress}} </br>
+											<button ng-click="getaddressinfo()" ng-show="eventholder.eventaddress">Get address info </button>
                                             
     </div>
 	<div class="form-group">				
@@ -23,19 +24,37 @@
                                             
     </div>
 	
-								
-								
+	<div class="form-group">							
+	<pre style="overflow-x:scroll; overflow-y:scroll;  height: 15pc">
+  {{listaddressinfo}}
+  </pre>
+  	</div>
  
 	
 	<div class="form-group">
                                 
-											<label>Set min percentage sellers</label>
-                                            <input type="number" class="form-control" placeholder="Enter percentage of approval needed" ng-model="policy.minsellersneeded"> 
-											
-											
-											<button  class="btn btn-default" ng-click="setpolicyrates()">Set policy rate</button>
+
+<div ng-show="utxosaddressinfo.length > 0">
+<p ng-repeat="utxo in utxosaddressinfo">
+
+
+txid--{{utxo.txid}} </br>
+assetId--{{utxo.assets[0].assetId}} </br>
+<button ng-click="getassetdetail2(utxo.txid, utxo.assets[0].assetId)" >Get asset details </button>
+	
+</p>
+</div>
+<div ng-show="utxosaddressinfo.length == 0">
+<H2> You have no utxos </H2>
+</div>
+
+
     </div>
 	
+<pre style="overflow-x:scroll; overflow-y:scroll;  height: 15pc">
+  {{assetsmeta}}
+  </pre>
+
 	
 
 	 
