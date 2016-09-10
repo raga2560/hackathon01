@@ -1,11 +1,11 @@
 Asset
 
-<button ng-click="createtestnetasset()" >Create testnet asset </button>
+<button class="btn btn-default" ng-click="createtestnetasset()" >Create testnet asset </button>
 
-<button ng-click="gettestnetassets()" >Get testnet assets </button>
+<button class="btn btn-default" ng-click="gettestnetassets()" >Get testnet assets </button>
 <div ng-show="assets.length > 0">
 <p ng-repeat="asset in assets">
-	--{{asset.assetId}} <button ng-click="gettestnetasset()" >Get asset details </button> <button ng-click="commitasset(asset)" >Commit asset creation </button>
+	--{{asset.assetId}} <button class="btn btn-default" ng-click="gettestnetasset()" >Get asset details </button> <button class="btn btn-default" ng-click="commitasset(asset)" >Commit asset creation </button>
 </p>
 </div>
 <div ng-show="assets.length == 0">
@@ -13,19 +13,16 @@ Asset
 </div>
 <div>
 
-Asset id<input ng-model="assetcheck.assetid" /> 
-<button ng-click="getassetowner()" >Get asset owners </button>
+Asset id<input ng-model="assetcheck.assetid" />
+<button class="btn btn-default" ng-click="getassetowner()" >Get asset owners </button>
 <p ng-repeat="holder in checkassets.holders">
-Asset owner 
-	--{{holder.address}} </button> <button ng-click="getassetdetail(checkassets)" >Get asset description </button>
+Asset owner
+	--{{holder.address}} </button> <button class="btn btn-default" ng-click="getassetdetail(checkassets)" >Get asset description </button>
 </p>
 
 
 <pre style="overflow-x:scroll; overflow-y:scroll;  height: 15pc">
   {{assetsmeta}}
   </pre>
-  
+
 </div>
-
-
-
