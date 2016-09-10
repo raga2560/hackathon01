@@ -163,7 +163,7 @@ angular.module('myapp.controllers2', ['chart.js'])
 		 $scope.error= '';
 	
 		
-		if($scope.seller.name == '' || $scope.seller.resaddress == '' )
+		if($scope.seller.name == '' || $scope.seller.phoneNumber == '' || $scope.seller.aadharNumber == '' )
 		{
 			$scope.error= 'Enter data in fields';
 			return;
@@ -332,7 +332,7 @@ angular.module('myapp.controllers2', ['chart.js'])
 	 {
 		 $scope.error= '';
 	
-		if($scope.buyer.name == '' || $scope.buyer.resaddress == '' )
+		if($scope.seller.name == '' || $scope.seller.phoneNumber == '' || $scope.seller.aadharNumber == '' )
 		{
 			$scope.error= 'Enter data in fields';
 			return;
