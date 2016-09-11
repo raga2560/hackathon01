@@ -169,7 +169,7 @@ angular.module('myapp.controllers2', ['chart.js'])
 			return;
 		}
 		
-		 $http.post('/hackathon/createseller', $scope.sellerapplication).then(function(response) {
+		 $http.post('/hackathon/createseller', $scope.seller).then(function(response) {
 	  
 		//$scope.testnet = response.data.testnet;
 		$scope.seller = {};
@@ -209,6 +209,73 @@ angular.module('myapp.controllers2', ['chart.js'])
 	 }
 	 
    })
+   
+      .controller('LoginRegistrationCtrl', function($scope, $http) {
+	   
+	   $scope.login = {
+		 username: '',
+		 password:''
+	   };
+	 
+	  $scope.register = {
+		 username: '',
+		 password:'',
+		 verify:''
+	   };
+	   
+	   $scope.loggedin = false;
+	   
+	   
+	 
+	 $scope.login1 = function() 
+	 {
+      $http.post('/login', $scope.login).then(function(response) {
+	  
+
+		$scope.loggedin = true;
+		
+      }, function(errResponse) {
+		
+
+		$scope.loggedin = false;
+        console.error('Error while fetching notes');
+      
+	  });
+	 }
+	 
+	 $scope.logout = function() 
+	 {
+      $http.get('/logout').then(function(response) {
+	  
+
+		$scope.loggedin = false;
+		
+      }, function(errResponse) {
+		
+
+
+        console.error('Error while fetching notes');
+      
+	  });
+	 }
+	 
+	 $scope.register1 = function() 
+	 {
+      $http.post('/signup', $scope.register).then(function(response) {
+	  
+        //$scope.username = response.data.username;
+		
+      }, function(errResponse) {
+		  
+        console.error('Error while fetching notes');
+      
+	  });
+	 }
+	 
+	   
+   })
+
+   
 
    .controller('BuyerRegistrationCtrl', function($scope, $http) {
      
@@ -234,6 +301,11 @@ angular.module('myapp.controllers2', ['chart.js'])
 	 };
 	 $scope.owners = [];
 	 
+	 $scope.buyer = {
+		 name:'',
+		 phoneNumber:'',
+		 aadharNumber:''
+	 };
 	 $scope.listevents = function ()
 	 {
 		 var obj = {
@@ -332,7 +404,7 @@ angular.module('myapp.controllers2', ['chart.js'])
 	 {
 		 $scope.error= '';
 	
-		if($scope.seller.name == '' || $scope.seller.phoneNumber == '' || $scope.seller.aadharNumber == '' )
+		if($scope.buyer.name == '' || $scope.buyer.phoneNumber == '' || $scope.buyer.aadharNumber == '' )
 		{
 			$scope.error= 'Enter data in fields';
 			return;
@@ -413,6 +485,7 @@ angular.module('myapp.controllers2', ['chart.js'])
 		name:''
 	 };
 	 
+	 $scope.asseterror = '';
 	 $scope.selectedassets = [];
 	$scope.events = [];	 
 		 
@@ -481,7 +554,7 @@ angular.module('myapp.controllers2', ['chart.js'])
 $scope.createasset = function ()
 	 {
 		 $scope.error= '';
-	
+	$scope.asseterror = '';
 	$scope.asset.ownerid = $scope.owner.id;
 	$scope.asset.ownername = $scope.owner.ownername;
 	
@@ -494,7 +567,9 @@ $scope.createasset = function ()
 		 
 		 $http.post('/hackathon/createasset', $scope.asset).then(function(response) {
 	  
-		
+		if(response.data.code > 0){
+			$scope.asseterror = angular.toJson(response.data, 1);
+		}
 		$scope.asset = {};
 		
 		

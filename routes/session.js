@@ -48,10 +48,10 @@ function SessionHandler (db) {
 
             if (err) {
                 if (err.no_such_user) {
-                    return res.render("login", {username:username, password:"", login_error:"No such user"});
+                    return res.status(500).json({username:username, password:"", login_error:"No such user"});
                 }
                 else if (err.invalid_password) {
-                    return res.render("login", {username:username, password:"", login_error:"Invalid password"});
+                    return res.status(500).json( {username:username, password:"", login_error:"Invalid password"});
                 }
                 else {
                     // Some other kind of error
@@ -65,7 +65,8 @@ function SessionHandler (db) {
                 if (err) return next(err);
 
                 res.cookie('session', session_id);
-                return res.redirect('/welcome');
+				return res.json(session_id);
+                //return res.redirect('/welcome');
             });
         });
     }
@@ -242,7 +243,8 @@ function SessionHandler (db) {
 
             // Even if the user wasn't logged in, redirect to home
             res.cookie('session', '');
-            return res.redirect('/');
+			res.json(true);
+            //return res.redirect('/');
         });
     }
 
@@ -305,7 +307,7 @@ function SessionHandler (db) {
                     // this was a duplicate
                     if (err.code == '11000') {
                         errors['username_error'] = "Username already in use. Please choose another";
-                        return res.render("signup", errors);
+                        return res.status(500).	json(errors);
                     }
                     // this was a different error
                     else {
@@ -319,13 +321,14 @@ function SessionHandler (db) {
                     if (err) return next(err);
 
                     res.cookie('session', session_id);
-                    return res.redirect('/welcome');
+					return res.json(session_id);
+                    //return res.redirect('/welcome');
                 });
             });
         }
         else {
             console.log("user did not validate");
-            return res.render("signup", errors);
+            return res.status(500).json(errors);
         }
     }
 	

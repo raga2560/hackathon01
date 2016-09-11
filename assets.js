@@ -71,6 +71,7 @@ function AssetstoreDAO(db) {
             if (err) return callback(err, null);
 
 			if( record != null) {
+			console.log("record="+JSON.stringify(record));
 			var query = {};
 			query['_id'] = record['_id'];
 				

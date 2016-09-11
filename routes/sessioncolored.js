@@ -1145,14 +1145,18 @@ var utxo = txid+':1'
 			postToApi('broadcast',data_params,function(err, body){
 				if (err) {return console.log('error: '+err); }
 
-					var obj = {
+				if(body.status == 500){
+					return res.json(body);
+				}
+					var obj1 = {
 						username: username,
 					txid: body.txid,
 					assetId: assetId,
 					txHex: txHex
 					
 					};
-					assetstore.updateasset(username, obj,function(err, object) {
+					console.log(JSON.stringify(obj1));
+					assetstore.updateasset(username, obj1,function(err, object) {
 						if(err) return res.json({error:err});
 						else {
 							return res.json(object);

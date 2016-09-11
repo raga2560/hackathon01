@@ -367,7 +367,7 @@ function EscrowstoreDAO(db) {
 			charts.totalsellers = record.assets.length;
 			var matching = 0;
 			for(var i =0 ; i< record.assets.length; i++){
-			 if(buyerrecord.price >= record.assets[i].price){
+			if(parseInt(buyerrecord.price) >= parseInt(record.assets[i].price)){
 				matching ++; 
 			 }
 			}
